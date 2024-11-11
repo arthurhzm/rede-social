@@ -1,11 +1,12 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { Button, Col, Container, FloatingLabel, FormControl, InputGroup, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { PATH } from "../routes/routes";
-import { z } from "zod";
+import { Button, Col, Container, InputGroup, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 import InputText from "../components/InputText";
+import { PATH } from "../routes/routes";
 
 
 function RegisterForm() {
@@ -15,27 +16,36 @@ function RegisterForm() {
     const [viewConfirmPassword, setViewConfirmPassword] = useState(false);
 
     const schema = z.object({
-        username: z.string().min(3),
-        email: z.string().email(),
-        password: z.string().min(6),
-        confirmPassword: z.string().min(6),
+        username: z.string().min(3, { message: "Informe um usuário com pelo menos 3 caracteres" }),
+        email: z.string().email({ message: "Informe um e-mail válido" }),
+        password: z.string().min(6, { message: "Informe uma senha com pelo menos 6 caracteres" }),
+        confirmPassword: z.string().min(6, { message: "Informe uma senha com pelo menos 6 caracteres" }),
     }).refine(data => data.password === data.confirmPassword, {
         message: "As senhas não coincidem",
         path: ["confirmPassword"],
     });
 
-    const { register, handleSubmit, formState } = useForm();
+    type RegisterFormData = z.infer<typeof schema>;
 
+    const { register, handleSubmit, formState } = useForm<RegisterFormData>({
+        resolver: zodResolver(schema)
+    });
+
+    const onSubmit = (data: RegisterFormData) => {
+        console.log(data);
+    }
 
     return (
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <Row>
                 <Col>
                     <InputGroup>
                         <InputGroup.Text>@</InputGroup.Text>
                         <InputText
                             label="Usuário"
-                            type="text" />
+                            type="text"
+                            {...register("username")}
+                            errors={formState.errors.username} />
                     </InputGroup>
                 </Col>
             </Row>
@@ -43,7 +53,9 @@ function RegisterForm() {
                 <Col>
                     <InputText
                         label="E-mail"
-                        type="email" />
+                        type="email"
+                        {...register("email")}
+                        errors={formState.errors.email} />
                 </Col>
             </Row>
             <Row>
@@ -51,7 +63,9 @@ function RegisterForm() {
                     <InputGroup>
                         <InputText
                             label="Senha"
-                            type={viewPassword ? "text" : "password"} />
+                            type={viewPassword ? "text" : "password"}
+                            {...register("password")}
+                            errors={formState.errors.password} />
                         <InputGroup.Text onClick={() => setViewPassword(!viewPassword)}>
                             {viewPassword ? <EyeOff /> : <Eye />}
                         </InputGroup.Text>
@@ -61,7 +75,9 @@ function RegisterForm() {
                     <InputGroup>
                         <InputText
                             label="Confirmar senha"
-                            type={viewConfirmPassword ? "text" : "password"} />
+                            type={viewConfirmPassword ? "text" : "password"}
+                            {...register("confirmPassword")}
+                            errors={formState.errors.confirmPassword} />
                         <InputGroup.Text onClick={() => setViewConfirmPassword(!viewConfirmPassword)}>
                             {viewPassword ? <EyeOff /> : <Eye />}
                         </InputGroup.Text>
@@ -69,7 +85,9 @@ function RegisterForm() {
                 </Col>
             </Row>
             <div>
-                <Button variant="outline-dark">
+                <Button
+                    type="submit"
+                    variant="outline-dark">
                     Criar conta
                 </Button>
             </div>
