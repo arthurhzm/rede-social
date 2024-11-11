@@ -1,14 +1,29 @@
+using api.Models;
 using Microsoft.EntityFrameworkCore;
 
-public class AppDbContext : DbContext
+namespace api.Data
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public class AppDbContext : DbContext
     {
-        if (!optionsBuilder.IsConfigured)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        public DbSet<UserModel> Users { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Database=db_redeSocial;Username=postgres;Password=aquitem");
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql("Host=localhost;Database=db_redeSocial;Username=postgres;Password=aquitem");
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserModel>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
