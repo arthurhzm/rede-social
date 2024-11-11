@@ -1,5 +1,5 @@
-export default class Path {
-    static HOME = '/';
-    static LOGIN = '/login';
-    static REGISTER = '/register';
+export const PATH = {
+    home: '/',
+    login: '/login',
+    register: '/register'
 }

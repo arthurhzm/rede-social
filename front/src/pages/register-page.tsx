@@ -2,7 +2,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Button, Col, Container, FloatingLabel, FormControl, InputGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Path from "../routes/routes";
+import { PATH } from "../routes/routes";
+
 
 function RegisterForm() {
 
@@ -65,7 +66,7 @@ function RegisterForm() {
                 <Button
                     type="button"
                     variant="outline-dark"
-                    onClick={() => navigate(Path.LOGIN)}>
+                    onClick={() => navigate(PATH.login)}>
                     Entrar
                 </Button>
             </div>

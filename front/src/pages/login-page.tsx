@@ -2,7 +2,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Button, Col, Container, FloatingLabel, FormControl, InputGroup, Row, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Path from "../routes/routes";
+import { PATH } from "../routes/routes";
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ function LoginForm() {
             <div>
                 <Button
                     variant="outline-dark"
-                    onClick={() => navigate(Path.REGISTER)}>
+                    onClick={() => navigate(PATH.register)}>
                     Criar uma conta
                 </Button>
             </div>
