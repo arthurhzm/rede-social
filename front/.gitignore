@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Cache e compilação do .NET
+bin/
+obj/
+
+# Configurações de usuário específicas do Visual Studio
+*.suo
+*.csproj.user
+.vs/
