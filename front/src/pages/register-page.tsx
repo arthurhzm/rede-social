@@ -31,7 +31,7 @@ function RegisterForm() {
         resolver: zodResolver(schema)
     });
 
-    const onSubmit = (data: RegisterFormData) => {
+    const onSubmit = async (data: RegisterFormData) => {
         console.log(data);
     }
 
