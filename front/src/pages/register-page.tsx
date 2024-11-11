@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Button, Col, Container, FloatingLabel, FormControl, InputGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../routes/routes";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import InputText from "../components/InputText";
 
 
 function RegisterForm() {
@@ -11,45 +14,56 @@ function RegisterForm() {
     const [viewPassword, setViewPassword] = useState(false);
     const [viewConfirmPassword, setViewConfirmPassword] = useState(false);
 
+    const schema = z.object({
+        username: z.string().min(3),
+        email: z.string().email(),
+        password: z.string().min(6),
+        confirmPassword: z.string().min(6),
+    }).refine(data => data.password === data.confirmPassword, {
+        message: "As senhas não coincidem",
+        path: ["confirmPassword"],
+    });
+
+    const { register, handleSubmit, formState } = useForm();
+
+
     return (
         <form>
             <Row>
                 <Col>
                     <InputGroup>
                         <InputGroup.Text>@</InputGroup.Text>
-                        <FloatingLabel label="Usuário">
-                            <FormControl type="text" />
-                        </FloatingLabel>
+                        <InputText
+                            label="Usuário"
+                            type="text" />
                     </InputGroup>
                 </Col>
             </Row>
             <Row>
                 <Col>
-                    <FloatingLabel label="Email">
-                        <FormControl type="email" />
-                    </FloatingLabel>
+                    <InputText
+                        label="E-mail"
+                        type="email" />
                 </Col>
             </Row>
             <Row>
                 <Col>
                     <InputGroup>
-                        <FloatingLabel label="Senha">
-                            <FormControl type={viewPassword ? "text" : "password"} />
-                        </FloatingLabel>
+                        <InputText
+                            label="Senha"
+                            type={viewPassword ? "text" : "password"} />
                         <InputGroup.Text onClick={() => setViewPassword(!viewPassword)}>
                             {viewPassword ? <EyeOff /> : <Eye />}
                         </InputGroup.Text>
                     </InputGroup>
                 </Col>
-            </Row>
-            <Row>
                 <Col>
                     <InputGroup>
-                        <FloatingLabel label="Senha">
-                            <FormControl type={viewConfirmPassword ? "text" : "password"} />
-                        </FloatingLabel>
+                        <InputText
+                            label="Confirmar senha"
+                            type={viewConfirmPassword ? "text" : "password"} />
                         <InputGroup.Text onClick={() => setViewConfirmPassword(!viewConfirmPassword)}>
-                            {viewConfirmPassword ? <EyeOff /> : <Eye />}
+                            {viewPassword ? <EyeOff /> : <Eye />}
                         </InputGroup.Text>
                     </InputGroup>
                 </Col>
