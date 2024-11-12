@@ -1,31 +1,54 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { Button, Col, Container, FloatingLabel, FormControl, InputGroup, Row, Stack } from "react-bootstrap";
+import { Button, Col, Container, InputGroup, Row, Stack } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+import InputText from "../components/InputText";
 import { PATH } from "../routes/routes";
 
 function LoginForm() {
     const navigate = useNavigate();
     const [viewPassword, setViewPassword] = useState(false);
 
+    const schema = z.object({
+        username: z.string().min(3, { message: "Informe um usuário com pelo menos 3 caracteres" }),
+        password: z.string().min(6, { message: "Informe uma senha com pelo menos 6 caracteres" }),
+    });
+
+    type LoginFormType = z.infer<typeof schema>;
+
+    const { register, handleSubmit, formState } = useForm<LoginFormType>({
+        resolver: zodResolver(schema)
+    });
+
+    const onSubmit = async (data: LoginFormType) => {
+        console.log(data);
+    }
+
     return (
-        <>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <Row className="mb-2">
                 <Col md={3}>
                     <InputGroup>
                         <InputGroup.Text>@</InputGroup.Text>
-                        <FloatingLabel label="Usuário">
-                            <FormControl type="text" />
-                        </FloatingLabel>
+                        <InputText
+                            type="text"
+                            label="Usuário"
+                            {...register("username")}
+                            errors={formState.errors.username} />
                     </InputGroup>
                 </Col>
             </Row>
             <Row className="mb-2">
                 <Col md={3}>
                     <InputGroup>
-                        <FloatingLabel label="Senha">
-                            <FormControl type={viewPassword ? "text" : "password"} />
-                        </FloatingLabel>
+                        <InputText
+                            type={viewPassword ? "text" : "password"}
+                            label="Senha"
+                            {...register("password")}
+                            errors={formState.errors.password} />
                         <InputGroup.Text onClick={() => setViewPassword(!viewPassword)}>
                             {viewPassword ? <EyeOff size={24} /> : <Eye size={24} />}
                         </InputGroup.Text>
@@ -33,19 +56,22 @@ function LoginForm() {
                 </Col>
             </Row>
             <div>
-                <Button variant="outline-dark">
+                <Button
+                    type="submit"
+                    variant="outline-dark">
                     Entrar
                 </Button>
             </div>
             <div>ou</div>
             <div>
                 <Button
+                    type="button"
                     variant="outline-dark"
                     onClick={() => navigate(PATH.register)}>
                     Criar uma conta
                 </Button>
             </div>
-        </>
+        </form>
     )
 }
 
