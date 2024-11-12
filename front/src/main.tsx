@@ -9,6 +9,7 @@ import RegisterPage from './pages/register-page.tsx';
 import { ToastProvider } from './contexts/ToastContext.tsx';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import PrivateRoute from './components/PrivateRoute.tsx';
+import PublicRoute from './components/PublicRoute.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,14 +17,17 @@ createRoot(document.getElementById('root')!).render(
       <ToastProvider>
         <BrowserRouter>
           <Routes>
-            <Route path='/login' element={<LoginPage />} />
-            <Route path='/register' element={<RegisterPage />} />
+            
+            <Route element={<PublicRoute />} >
+              <Route path='/login' element={<LoginPage />} />
+              <Route path='/register' element={<RegisterPage />} />
+            </Route>
 
             <Route element={<PrivateRoute />} >
               <Route path="/" element={<Main />} />
             </Route>
           </Routes>
-          
+
         </BrowserRouter>
       </ToastProvider>
     </AuthProvider>
