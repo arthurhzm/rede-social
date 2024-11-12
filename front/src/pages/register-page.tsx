@@ -7,11 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import InputText from "../components/InputText";
 import { PATH } from "../routes/routes";
+import useUser from "../hooks/use-user";
+import { useToast } from "../contexts/ToastContext";
 
 
 function RegisterForm() {
 
     const navigate = useNavigate();
+    const { createUser } = useUser();
+    const { showSuccess } = useToast()
     const [viewPassword, setViewPassword] = useState(false);
     const [viewConfirmPassword, setViewConfirmPassword] = useState(false);
 
@@ -32,7 +36,9 @@ function RegisterForm() {
     });
 
     const onSubmit = async (data: RegisterFormData) => {
-        console.log(data);
+        await createUser(data);
+        showSuccess("Usuário cadastrado com sucesso");
+        navigate(PATH.login);
     }
 
     return (
