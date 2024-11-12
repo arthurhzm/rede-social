@@ -14,9 +14,15 @@ const useUser = () => {
         return res;
     }
 
+    const refreshToken = async () => {
+        const res = await api.post("/users/refresh");
+        return res;
+    }
+
     return {
         createUser,
-        authenticateUser
+        authenticateUser,
+        refreshToken
     }
 }
 
