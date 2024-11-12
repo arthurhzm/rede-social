@@ -9,14 +9,14 @@ const useUser = () => {
         return res.data;
     }
 
-    const login = async (payload: UserLoginProps) => {
+    const authenticateUser = async (payload: UserLoginProps) => {
         const res = await api.post("/users/auth", payload);
         return res.data;
     }
 
     return {
         createUser,
-        login
+        authenticateUser
     }
 }
 

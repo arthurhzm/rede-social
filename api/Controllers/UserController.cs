@@ -28,5 +28,19 @@ namespace api.Controllers
                 return BadRequest(new { message = e.Message });
             }
         }
+
+        [HttpPost("auth")]
+        public async Task<ActionResult<UserModel>> Authenticate([FromBody] LoginUserDTO model)
+        {
+            try
+            {
+                var user = await _userService.Authenticate(model);
+                return user;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
     }
 }

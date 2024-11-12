@@ -7,9 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import InputText from "../components/InputText";
 import { PATH } from "../routes/routes";
+import useUser from "../hooks/use-user";
 
 function LoginForm() {
     const navigate = useNavigate();
+    const { authenticateUser } = useUser();
     const [viewPassword, setViewPassword] = useState(false);
 
     const schema = z.object({
@@ -24,7 +26,8 @@ function LoginForm() {
     });
 
     const onSubmit = async (data: LoginFormType) => {
-        console.log(data);
+        await authenticateUser(data);
+        navigate(PATH.home);
     }
 
     return (

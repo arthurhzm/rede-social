@@ -36,5 +36,17 @@ namespace api.Services
             await _context.SaveChangesAsync();
             return user;
         }
+
+        public async Task<UserModel> Authenticate(LoginUserDTO model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            {
+                throw new Exception("Credenciais inválidas");
+            }
+
+            return user;
+        }
     }
 }
