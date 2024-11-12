@@ -1,16 +1,22 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using api.Data;
 using api.DTO;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api.Services
 {
     public class UserService
     {
         private readonly AppDbContext _context;
-        public UserService(AppDbContext context)
+        private readonly IConfiguration _configuration;
+        public UserService(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<UserModel> Create(CreateUserDTO model)
@@ -37,7 +43,7 @@ namespace api.Services
             return user;
         }
 
-        public async Task<UserModel> Authenticate(LoginUserDTO model)
+        public async Task<string> Authenticate(LoginUserDTO model)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
 
@@ -46,7 +52,22 @@ namespace api.Services
                 throw new Exception("Credenciais inválidas");
             }
 
-            return user;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var secretKey = _configuration["Jwt:Key"];
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
+        
     }
 }

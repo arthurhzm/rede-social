@@ -34,8 +34,8 @@ namespace api.Controllers
         {
             try
             {
-                var user = await _userService.Authenticate(model);
-                return user;
+                var token = await _userService.Authenticate(model);
+                return Ok(new { data = new { token } });
             }
             catch (Exception e)
             {

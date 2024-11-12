@@ -8,10 +8,12 @@ import { z } from "zod";
 import InputText from "../components/InputText";
 import { PATH } from "../routes/routes";
 import useUser from "../hooks/use-user";
+import { useAuth } from "../contexts/AuthContext";
 
 function LoginForm() {
     const navigate = useNavigate();
     const { authenticateUser } = useUser();
+    const { setToken } = useAuth();
     const [viewPassword, setViewPassword] = useState(false);
 
     const schema = z.object({
@@ -26,7 +28,9 @@ function LoginForm() {
     });
 
     const onSubmit = async (data: LoginFormType) => {
-        await authenticateUser(data);
+        const response = await authenticateUser(data);
+        const { token } = response.data;
+        setToken(token);
         navigate(PATH.home);
     }
 

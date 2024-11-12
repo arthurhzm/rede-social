@@ -11,7 +11,7 @@ const useUser = () => {
 
     const authenticateUser = async (payload: UserLoginProps) => {
         const res = await api.post("/users/auth", payload);
-        return res.data;
+        return res;
     }
 
     return {
