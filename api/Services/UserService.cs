@@ -71,13 +71,8 @@ namespace api.Services
                 throw new Exception("Token inválido");
             }
 
-            var newRefreshToken = GenerateRefreshToken();
-
-            user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            await _context.SaveChangesAsync();
-
-            return newRefreshToken;
+            var newToken = GenerateJwtToken(user);
+            return newToken;
         }
 
         public string GenerateJwtToken(UserModel user)

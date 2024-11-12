@@ -63,15 +63,7 @@ namespace api.Controllers
             }
 
             var token = await _userService.GetUserByRefreshToken(refreshToken);
-
-            Response.Cookies.Append("refreshToken", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(7),
-            });
-
             return Ok(new { data = new { token } });
-
         }
 
     }
