@@ -3,3 +3,8 @@ export type CreateUserProps = {
     email: string;
     password: string;
 }
+
+export type UserLoginProps = {
+    username: string;
+    password: string;
+}

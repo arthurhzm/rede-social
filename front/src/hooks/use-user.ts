@@ -1,4 +1,4 @@
-import { CreateUserProps } from "../types/types";
+import { CreateUserProps, UserLoginProps } from "../types/types";
 import useApi from "./use-api";
 
 const useUser = () => {
@@ -9,8 +9,14 @@ const useUser = () => {
         return res.data;
     }
 
+    const login = async (payload: UserLoginProps) => {
+        const res = await api.post("/users/auth", payload);
+        return res.data;
+    }
+
     return {
-        createUser
+        createUser,
+        login
     }
 }
 

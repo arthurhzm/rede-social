@@ -1,4 +1,5 @@
 using api.Data;
+using api.DTO;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,18 +13,23 @@ namespace api.Services
             _context = context;
         }
 
-        public async Task<UserModel> Create(string username, string email, string password)
+        public async Task<UserModel> Create(CreateUserDTO model)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == email))
+            if (await _context.Users.AnyAsync(u => u.Email == model.Email))
             {
                 throw new Exception("Este e-mail já está em uso");
             }
 
+            if (await _context.Users.AnyAsync(u => u.Username == model.Username))
+            {
+                throw new Exception("Este nome de usuário já está em uso");
+            }
+
             var user = new UserModel
             {
-                Username = username,
-                Email = email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                Username = model.Username,
+                Email = model.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
             };
 
             _context.Users.Add(user);

@@ -20,7 +20,7 @@ namespace api.Controllers
         {
             try
             {
-                var user = await _userService.Create(model.Username, model.Email, model.Password);
+                var user = await _userService.Create(model);
                 return user;
             }
             catch (Exception e)

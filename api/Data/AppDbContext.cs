@@ -23,6 +23,10 @@ namespace api.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<UserModel>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
     }
