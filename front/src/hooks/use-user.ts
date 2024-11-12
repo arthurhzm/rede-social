@@ -15,7 +15,7 @@ const useUser = () => {
     }
 
     const refreshToken = async () => {
-        const res = await api.post("/users/refresh");
+        const res = await api.post("/users/refresh-token");
         return res;
     }
 

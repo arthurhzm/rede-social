@@ -62,6 +62,24 @@ namespace api.Services
             return (token, refreshToken);
         }
 
+        public async Task<string> GetUserByRefreshToken(string refreshToken)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+            if (user == null)
+            {
+                throw new Exception("Token inválido");
+            }
+
+            var newRefreshToken = GenerateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _context.SaveChangesAsync();
+
+            return newRefreshToken;
+        }
+
         public string GenerateJwtToken(UserModel user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -82,7 +100,7 @@ namespace api.Services
 
         }
 
-        private string GenerateRefreshToken()
+        public string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
             using (var rng = RandomNumberGenerator.Create())

@@ -52,5 +52,27 @@ namespace api.Controllers
             }
         }
 
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized(new { message = "Token inválido" });
+            }
+
+            var token = await _userService.GetUserByRefreshToken(refreshToken);
+
+            Response.Cookies.Append("refreshToken", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7),
+            });
+
+            return Ok(new { data = new { token } });
+
+        }
+
     }
 }
