@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "Dxn4PL89Tru1/89rne9ULlh18broZtmUDqmFDhNmAQyLU4DeydeVYvxVPoMw4FphBeGyO8s5v2pzEMXhbvJ0EA==",
+  "dgSpecHash": "5789VvXB9lnFJ3AyKKPtXgka21fWq6FHa87xr9bhbL/Nw5Xz2fBQdYl8Ho7t1HObVgk87ScHigCWLT1whLPk4Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\arthu\\Documents\\GitHub\\rede-social\\api\\api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\arthu\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\arthu\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\arthu\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\arthu\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.3\\microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",

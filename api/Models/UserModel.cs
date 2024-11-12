@@ -7,7 +7,7 @@ namespace api.Models
 
         public string Email { get; set; }
         public string PasswordHash { get; set; }
-        public DateTime DateTime { get; set; }
+        public DateTime DateTime { get; set; } = DateTime.Now;
 
     }
 }

@@ -12,12 +12,19 @@ namespace api.Services
             _context = context;
         }
 
-        public async Task<UserModel> Create(UserModel user)
+        public async Task<UserModel> Create(string username, string email, string password)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == email))
             {
                 throw new Exception("Este e-mail já está em uso");
             }
+
+            var user = new UserModel
+            {
+                Username = username,
+                Email = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
