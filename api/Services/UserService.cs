@@ -68,6 +68,10 @@ namespace api.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        public async Task<string> Refresh(){
+            
+        }
         
     }
 }
