@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using api.Data;
 using api.DTO;
@@ -43,7 +44,7 @@ namespace api.Services
             return user;
         }
 
-        public async Task<string> Authenticate(LoginUserDTO model)
+        public async Task<(string token, string refreshToken)> Authenticate(LoginUserDTO model)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
 
@@ -52,6 +53,17 @@ namespace api.Services
                 throw new Exception("Credenciais inválidas");
             }
 
+            var token = GenerateJwtToken(user);
+            var refreshToken = GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+            await _context.SaveChangesAsync();
+
+            return (token, refreshToken);
+        }
+
+        public string GenerateJwtToken(UserModel user)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var secretKey = _configuration["Jwt:Key"];
 
@@ -67,11 +79,19 @@ namespace api.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+
         }
 
-        public async Task<string> Refresh(){
-            
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
         }
-        
+
     }
+
 }

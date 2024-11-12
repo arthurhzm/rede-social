@@ -9,5 +9,8 @@ namespace api.Models
         public string PasswordHash { get; set; }
         public DateTime DateTime { get; set; } = DateTime.UtcNow;
 
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
+
     }
 }
