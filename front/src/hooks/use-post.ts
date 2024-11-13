@@ -9,8 +9,14 @@ const usePost = () => {
         return res.data;
     }
 
+    const fetchAllPosts = async () => {
+        const res = await api.get("/posts");
+        return res;
+    }
+
     return {
-        createPost
+        createPost,
+        fetchAllPosts   
     }
 }
 

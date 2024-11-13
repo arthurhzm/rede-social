@@ -12,3 +12,14 @@ export type UserLoginProps = {
 export type CreatePostProps = {
     content: string;
 }
+
+export type GridPostProps = {
+    id: number;
+    content: string;
+    userId: number;
+    user: {
+        username: string;
+    }
+    createdAt: string;
+    updatedAt: string;
+}

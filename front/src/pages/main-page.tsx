@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Col, FormControl, Row } from "react-bootstrap"
 import usePost from "../hooks/use-post";
 import { useToast } from "../contexts/ToastContext";
+import { GridPostProps, PostProps } from "../types/types";
 
 function LeftColumn() {
     return (
@@ -43,7 +44,20 @@ function ExpandingTextarea({ content, setContent }: { content: string; setConten
     );
 }
 
-function PublishContainer() {
+function PostsOptions() {
+    return (
+        <Row>
+            <Col md={6}>
+                <Button>Para você</Button>
+            </Col>
+            <Col md={6}>
+                <Button>Seguindo</Button>
+            </Col>
+        </Row>
+    )
+}
+
+function PostContainer() {
     const [content, setContent] = useState<string>('');
     const { createPost } = usePost();
     const { showSuccess } = useToast()
@@ -78,18 +92,42 @@ function PublishContainer() {
 
 }
 
+function Posts() {
+
+    const [posts, setPosts] = useState<GridPostProps[]>([]);
+    const [userSession, setUserSession] = useState<number>(0);
+    const { fetchAllPosts } = usePost();
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const res = await fetchAllPosts();
+            const { userId, posts } = res.data
+            setPosts(posts);
+            setUserSession(userId);
+        };
+
+        fetchPosts();
+    }, []);
+
+    return (
+        <>
+            {posts.length && posts.map((post) => (
+                <Row key={post.id}>
+                    <Col md={12}>
+                        {post.content}
+                    </Col>
+                </Row>
+            ))}
+        </>
+    )
+}
+
 function MainColumn() {
     return (
         <Col md={6}>
-            <Row>
-                <Col md={6}>
-                    <Button>Para você</Button>
-                </Col>
-                <Col md={6}>
-                    <Button>Seguindo</Button>
-                </Col>
-            </Row>
-            <PublishContainer />
+            <PostsOptions />
+            <PostContainer />
+            <Posts />
         </Col>
     )
 }

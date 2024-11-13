@@ -41,5 +41,26 @@ namespace api.Controllers
                 return BadRequest(new { message = e.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult<PostModel[]>> GetAll()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (userId.IsNullOrEmpty())
+                {
+                    return Unauthorized(new { message = "Usuário não autenticado" });
+                }
+
+                var posts = await _postService.GetAll();
+                return Ok(new { data = new { userId = int.Parse(userId), posts } });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
     }
 }
