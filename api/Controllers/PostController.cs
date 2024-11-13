@@ -20,7 +20,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PostModel>> Create([FromBody] string Content)
+        public async Task<ActionResult<PostModel>> Create([FromBody] CreatePostDTO model)
         {
             try
             {
@@ -31,11 +31,7 @@ namespace api.Controllers
                     return Unauthorized(new { message = "Usuário não autenticado" });
                 }
 
-                var model = new CreatePostDTO
-                {
-                    Content = Content,
-                    UserId = int.Parse(userId)
-                };
+                model.UserId = int.Parse(userId);
 
                 var post = await _postService.Create(model);
                 return post;

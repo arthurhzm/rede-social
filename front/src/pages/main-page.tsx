@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { Button, Col, FormControl, Row } from "react-bootstrap"
+import usePost from "../hooks/use-post";
+import { useToast } from "../contexts/ToastContext";
 
 function LeftColumn() {
     return (
@@ -43,11 +45,14 @@ function ExpandingTextarea({ content, setContent }: { content: string; setConten
 
 function PublishContainer() {
     const [content, setContent] = useState<string>('');
+    const { createPost } = usePost();
+    const { showSuccess } = useToast()
 
-    const makePost = () => {
+    const makePost = async () => {
         if (content === '') return;
-        console.log(content);
-    setContent('');
+        await createPost({ content });
+        showSuccess("Publicação realizada com sucesso!");
+        setContent('');
     }
 
     return (

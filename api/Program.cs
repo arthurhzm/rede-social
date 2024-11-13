@@ -37,6 +37,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<UserService>();
 
 builder.Services.AddCors(options =>

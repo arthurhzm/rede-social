@@ -8,3 +8,7 @@ export type UserLoginProps = {
     username: string;
     password: string;
 }
+
+export type CreatePostProps = {
+    content: string;
+}
