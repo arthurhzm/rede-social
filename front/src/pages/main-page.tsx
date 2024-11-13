@@ -44,6 +44,12 @@ function ExpandingTextarea({ content, setContent }: { content: string; setConten
 function PublishContainer() {
     const [content, setContent] = useState<string>('');
 
+    const makePost = () => {
+        if (content === '') return;
+        console.log(content);
+        setContent('');
+    }
+
     return (
         <>
             <Row>
@@ -56,7 +62,10 @@ function PublishContainer() {
             </Row>
             <Row>
                 <Col md={12}>
-                    <Button>Publicar</Button>
+                    <Button
+                        type="button"
+                        disabled={content === ''}
+                        onClick={makePost}>Publicar</Button>
                 </Col>
             </Row>
         </>
