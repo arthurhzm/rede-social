@@ -47,7 +47,7 @@ function PublishContainer() {
     const makePost = () => {
         if (content === '') return;
         console.log(content);
-        setContent('');
+    setContent('');
     }
 
     return (
