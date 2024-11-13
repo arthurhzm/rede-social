@@ -3,6 +3,8 @@ import { Button, Col, FormControl, Row } from "react-bootstrap"
 import usePost from "../hooks/use-post";
 import { useToast } from "../contexts/ToastContext";
 import { GridPostProps, PostProps } from "../types/types";
+import { formatDate } from "../functions/utils";
+import { EllipsisVertical } from "lucide-react";
 
 function LeftColumn() {
     return (
@@ -112,11 +114,27 @@ function Posts() {
     return (
         <>
             {posts.length && posts.map((post) => (
-                <Row key={post.id}>
-                    <Col md={12}>
-                        {post.content}
-                    </Col>
-                </Row>
+                <div key={post.id}>
+                    <Row>
+                        <Col md={9}>
+                            @{post.user.username}
+                        </Col>
+                        <Col>
+                            {formatDate(post.createdAt, 'BR')}
+                        </Col>
+                        <Col md={"auto"}>
+                            {userSession === post.userId && <EllipsisVertical />}
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={12}>
+                            {post.content}
+                        </Col>
+                    </Row>
+                    <Row>
+
+                    </Row>
+                </div>
             ))}
         </>
     )
