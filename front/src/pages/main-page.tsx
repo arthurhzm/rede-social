@@ -140,6 +140,7 @@ function Posts() {
         }
 
         await updatePost({ content, id: post.id });
+        setPosts(posts.map(p => p.id === post.id ? { ...p, content } : p));
         showSuccess("Publicação editada com sucesso");
 
         toggleEdit();
@@ -167,7 +168,7 @@ function Posts() {
                                         size="sm"
                                         variant="outline-dark"
                                         disabled={!!isEditing}>
-                                        <Settings size={20}/>
+                                        <Settings size={20} />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item onClick={() => { setIsEditing(true); setContent(post.content) }}>Editar</Dropdown.Item>

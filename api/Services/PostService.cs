@@ -46,5 +46,19 @@ namespace api.Services
                 .ToArrayAsync();
         }
 
+        public async Task<PostModel> Update(UpdatePostDTO model)
+        {
+            var post = await _context.Posts.FindAsync(model.Id);
+
+            if (post == null)
+            {
+                throw new Exception("Post não encontrado");
+            }
+
+            post.Content = model.Content;
+            await _context.SaveChangesAsync();
+            return post;
+        }
+
     }
 }

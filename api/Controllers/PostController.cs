@@ -62,5 +62,20 @@ namespace api.Controllers
                 return BadRequest(new { message = e.Message });
             }
         }
+
+        [HttpPatch]
+        public async Task<ActionResult<PostModel>> Update([FromBody] UpdatePostDTO model)
+        {
+            try
+            {
+                var post = await _postService.Update(model);
+                return post;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
+
     }
 }
