@@ -19,10 +19,16 @@ const usePost = () => {
         return res;
     }
 
+    const deletePost = async (id: number) => {
+        const res = await api.delete(`/posts/${id}`);
+        return res;
+    }
+
     return {
         createPost,
         fetchAllPosts,
-        updatePost
+        updatePost,
+        deletePost
     }
 }
 

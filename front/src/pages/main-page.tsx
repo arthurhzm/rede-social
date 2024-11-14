@@ -101,7 +101,7 @@ function PostContainer() {
 
 function Posts() {
 
-    const { fetchAllPosts, updatePost } = usePost();
+    const { fetchAllPosts, updatePost, deletePost } = usePost();
     const { showSuccess } = useToast();
     const [posts, setPosts] = useState<GridPostProps[]>([]);
     const [userSession, setUserSession] = useState<number>(0);
@@ -124,8 +124,10 @@ function Posts() {
         setContent("");
     }
 
-    const handleDeletePost = (postId: number) => {
+    const handleDeletePost = async (postId: number) => {
         setPosts(posts.filter(post => post.id !== postId));
+        await deletePost(postId);
+        showSuccess("Publicação excluída com sucesso");
         toggleEdit();
     }
 
