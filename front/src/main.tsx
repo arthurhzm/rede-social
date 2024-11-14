@@ -12,6 +12,7 @@ import MainPage from './pages/main-page.tsx';
 import RegisterPage from './pages/register-page.tsx';
 import { Provider } from 'react-redux';
 import store from './store/store.ts';
+import ProfilePage from './pages/profile-page.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
 
               <Route element={<PrivateRoute />} >
                 <Route path="/" element={<MainPage />} />
+                <Route path='/profile/:username' element={<ProfilePage />} />
               </Route>
             </Routes>
 

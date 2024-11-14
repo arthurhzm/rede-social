@@ -8,6 +8,8 @@ import { GridPostProps } from "../types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost, removePost, setPosts, updatePost } from "../store/slices/postsSlice";
 import { RootState } from "../store/store";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "../routes/routes";
 
 
 function LeftColumn() {
@@ -91,11 +93,13 @@ function Posts() {
 
     const { fetchAllPosts, patchPost, deletePost } = usePost();
     const { showSuccess } = useToast();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const [userSession, setUserSession] = useState<number>(0);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [content, setContent] = useState<string>('');
     const posts = useSelector((state: RootState) => state.posts.posts);
-    const dispatch = useDispatch();
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -107,6 +111,10 @@ function Posts() {
 
         fetchPosts();
     }, []);
+
+    const handleProfileClick = (username: string) => {
+        navigate(PATH.profile + '/' + username);
+    }
 
     const toggleEdit = () => {
         setIsEditing(!isEditing);
@@ -146,7 +154,10 @@ function Posts() {
                 <div key={post.id}>
                     <Row>
                         <Col md={9}>
-                            @{post.user.username}
+                            <div onClick={() => handleProfileClick(post.user.username)}>
+                                foto de perfil
+                                @{post.user.username}
+                            </div>
                         </Col>
                         <Col>
                             {formatDate(post.createdAt, 'BR')}
@@ -228,7 +239,6 @@ export default function MainPage() {
         </Row>
     )
 }
-
 
 type ExpandingTextareaProps = {
     content: string;
