@@ -23,11 +23,12 @@ const postsSlice = createSlice({
             const { id, content } = action.payload;
             state.posts = state.posts.map(post => post.id === id ? { ...post, content } : post);
         },
-        deletePost(state, action) {
+        removePost(state, action) {
             const postId = action.payload;
             state.posts = state.posts.filter(post => post.id !== postId);
         }
     }
 });
 
+export const { setPosts, addPost, updatePost, removePost } = postsSlice.actions;
 export default postsSlice.reducer;

@@ -26,7 +26,17 @@ namespace api.Services
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
-            return post;
+            
+            return new PostModel
+            {
+                Id = post.Id,
+                Content = post.Content,
+                UserId = post.UserId,
+                User = new UserModel
+                {
+                    Username = (await _context.Users.FindAsync(post.UserId)).Username
+                }
+            };
         }
 
         public async Task<PostModel[]> GetAll()

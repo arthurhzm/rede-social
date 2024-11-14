@@ -6,7 +6,7 @@ const usePost = () => {
 
     const createPost = async (payload: CreatePostProps) => {
         const res = await api.post("/posts", payload);
-        return res.data;
+        return res;
     }
 
     const fetchAllPosts = async () => {
@@ -14,7 +14,7 @@ const usePost = () => {
         return res;
     }
 
-    const updatePost = async (payload: UpdatePostProps) => {
+    const patchPost = async (payload: UpdatePostProps) => {
         const res = await api.patch("/posts", payload);
         return res;
     }
@@ -27,7 +27,7 @@ const usePost = () => {
     return {
         createPost,
         fetchAllPosts,
-        updatePost,
+        patchPost,
         deletePost
     }
 }

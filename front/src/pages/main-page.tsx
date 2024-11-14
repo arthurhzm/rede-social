@@ -5,6 +5,10 @@ import { useToast } from "../contexts/ToastContext";
 import { formatDate } from "../functions/utils";
 import usePost from "../hooks/use-post";
 import { GridPostProps } from "../types/types";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost, removePost, setPosts, updatePost } from "../store/slices/postsSlice";
+import { RootState } from "../store/store";
+
 
 function LeftColumn() {
     return (
@@ -46,14 +50,17 @@ function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
 }
 
 function PostContainer() {
-    const [content, setContent] = useState<string>('');
     const { createPost } = usePost();
-    const { showSuccess } = useToast()
+    const { showSuccess } = useToast();
+    const dispatch = useDispatch();
+
+    const [content, setContent] = useState<string>('');
 
     const makePost = async () => {
         if (content === '') return;
-        await createPost({ content });
+        const res = await createPost({ content });
         showSuccess("Publicação realizada com sucesso!");
+        dispatch(addPost(res));
         setContent('');
     }
 
@@ -82,18 +89,19 @@ function PostContainer() {
 
 function Posts() {
 
-    const { fetchAllPosts, updatePost, deletePost } = usePost();
+    const { fetchAllPosts, patchPost, deletePost } = usePost();
     const { showSuccess } = useToast();
-    const [posts, setPosts] = useState<GridPostProps[]>([]);
     const [userSession, setUserSession] = useState<number>(0);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [content, setContent] = useState<string>('');
+    const posts = useSelector((state: RootState) => state.posts.posts);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const fetchPosts = async () => {
             const res = await fetchAllPosts();
             const { userId, posts } = res.data
-            setPosts(posts);
+            dispatch(setPosts(posts));
             setUserSession(userId);
         };
 
@@ -106,10 +114,9 @@ function Posts() {
     }
 
     const handleDeletePost = async (postId: number) => {
-        setPosts(posts.filter(post => post.id !== postId));
+        dispatch(removePost(postId));
         await deletePost(postId);
         showSuccess("Publicação excluída com sucesso");
-        toggleEdit();
     }
 
     const handleSaveChanges = async (post: GridPostProps) => {
@@ -122,8 +129,8 @@ function Posts() {
             handleDeletePost(post.id);
         }
 
-        await updatePost({ content, id: post.id });
-        setPosts(posts.map(p => p.id === post.id ? { ...p, content } : p));
+        await patchPost({ content, id: post.id });
+        dispatch(updatePost({ content, id: post.id }));
         showSuccess("Publicação editada com sucesso");
 
         toggleEdit();
@@ -197,7 +204,7 @@ function Posts() {
 
 function MainColumn() {
     return (
-        <Col md={6}>    
+        <Col md={6}>
             <PostContainer />
             <Posts />
         </Col>

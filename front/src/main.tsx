@@ -10,26 +10,30 @@ import './index.css';
 import LoginPage from './pages/login-page.tsx';
 import MainPage from './pages/main-page.tsx';
 import RegisterPage from './pages/register-page.tsx';
+import { Provider } from 'react-redux';
+import store from './store/store.ts';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <ToastProvider>
-        <BrowserRouter>
-          <Routes>
-            
-            <Route element={<PublicRoute />} >
-              <Route path='/login' element={<LoginPage />} />
-              <Route path='/register' element={<RegisterPage />} />
-            </Route>
+    <Provider store={store}>
+      <AuthProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <Routes>
 
-            <Route element={<PrivateRoute />} >
-              <Route path="/" element={<MainPage />} />
-            </Route>
-          </Routes>
+              <Route element={<PublicRoute />} >
+                <Route path='/login' element={<LoginPage />} />
+                <Route path='/register' element={<RegisterPage />} />
+              </Route>
 
-        </BrowserRouter>
-      </ToastProvider>
-    </AuthProvider>
+              <Route element={<PrivateRoute />} >
+                <Route path="/" element={<MainPage />} />
+              </Route>
+            </Routes>
+
+          </BrowserRouter>
+        </ToastProvider>
+      </AuthProvider>
+    </Provider>
   </StrictMode>,
 )
