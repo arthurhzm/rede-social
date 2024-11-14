@@ -11,31 +11,34 @@ import LoginPage from './pages/login-page.tsx';
 import MainPage from './pages/main-page.tsx';
 import RegisterPage from './pages/register-page.tsx';
 import { Provider } from 'react-redux';
-import store from './store/store.ts';
+import store, { persistor } from './store/store.ts';
 import ProfilePage from './pages/profile-page.tsx';
+import { PersistGate } from 'redux-persist/integration/react';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <AuthProvider>
-        <ToastProvider>
-          <BrowserRouter>
-            <Routes>
+      <PersistGate loading={null} persistor={persistor}>
+        <AuthProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Routes>
 
-              <Route element={<PublicRoute />} >
-                <Route path='/login' element={<LoginPage />} />
-                <Route path='/register' element={<RegisterPage />} />
-              </Route>
+                <Route element={<PublicRoute />} >
+                  <Route path='/login' element={<LoginPage />} />
+                  <Route path='/register' element={<RegisterPage />} />
+                </Route>
 
-              <Route element={<PrivateRoute />} >
-                <Route path="/" element={<MainPage />} />
-                <Route path='/profile/:username' element={<ProfilePage />} />
-              </Route>
-            </Routes>
+                <Route element={<PrivateRoute />} >
+                  <Route path="/" element={<MainPage />} />
+                  <Route path='/profile/:username' element={<ProfilePage />} />
+                </Route>
+              </Routes>
 
-          </BrowserRouter>
-        </ToastProvider>
-      </AuthProvider>
+            </BrowserRouter>
+          </ToastProvider>
+        </AuthProvider>
+      </PersistGate>
     </Provider>
   </StrictMode>,
 )
