@@ -231,7 +231,7 @@ function RightColumn() {
 }
 
 
-export default function Main() {
+export default function MainPage() {
     return (
         <Row>
             <LeftColumn />
