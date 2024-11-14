@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { PATH } from "../routes/routes";
 import LeftColumn from "../components/LeftColumn";
 import RightColumn from "../components/RightColumn";
+import { setUserId } from "../store/slices/authSlice";
 
 function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -100,6 +101,7 @@ function Posts() {
             const { userId, posts } = res.data
             dispatch(setPosts(posts));
             setUserSession(userId);
+            dispatch(setUserId(userId));
         };
 
         fetchPosts();
