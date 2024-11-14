@@ -68,6 +68,13 @@ namespace api.Controllers
         {
             try
             {
+                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (userId.IsNullOrEmpty())
+                {
+                    return Unauthorized(new { message = "Usuário não autenticado" });
+                }
+
                 var post = await _postService.Update(model);
                 return post;
             }
@@ -76,6 +83,29 @@ namespace api.Controllers
                 return BadRequest(new { message = e.Message });
             }
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (userId.IsNullOrEmpty())
+                {
+                    return Unauthorized(new { message = "Usuário não autenticado" });
+                }
+
+                await _postService.Delete(id);
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
+
 
     }
 }

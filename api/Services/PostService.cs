@@ -60,5 +60,19 @@ namespace api.Services
             return post;
         }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var post = await _context.Posts.FindAsync(id);
+
+            if (post == null)
+            {
+                throw new Exception("Post não encontrado");
+            }
+
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+            return new OkResult();
+        }
+
     }
 }
