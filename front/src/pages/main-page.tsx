@@ -101,7 +101,8 @@ function PostContainer() {
 
 function Posts() {
 
-    const { fetchAllPosts } = usePost();
+    const { fetchAllPosts, updatePost } = usePost();
+    const { showSuccess } = useToast();
     const [posts, setPosts] = useState<GridPostProps[]>([]);
     const [userSession, setUserSession] = useState<number>(0);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -128,7 +129,7 @@ function Posts() {
         toggleEdit();
     }
 
-    const handleSaveChanges = (post: GridPostProps) => {
+    const handleSaveChanges = async (post: GridPostProps) => {
         if (post.content === content) {
             toggleEdit();
             return
@@ -137,6 +138,9 @@ function Posts() {
         if (content === '') {
             handleDeletePost(post.id);
         }
+
+        await updatePost({ content, id: post.id });
+        showSuccess("Publicação editada com sucesso");
 
         toggleEdit();
     }
@@ -163,7 +167,7 @@ function Posts() {
                                         size="sm"
                                         variant="outline-dark"
                                         disabled={!!isEditing}>
-                                        <Settings />
+                                        <Settings size={20}/>
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item onClick={() => { setIsEditing(true); setContent(post.content) }}>Editar</Dropdown.Item>

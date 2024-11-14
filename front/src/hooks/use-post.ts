@@ -1,4 +1,4 @@
-import { CreatePostProps } from "../types/types";
+import { CreatePostProps, UpdatePostProps } from "../types/types";
 import useApi from "./use-api";
 
 const usePost = () => {
@@ -14,9 +14,15 @@ const usePost = () => {
         return res;
     }
 
+    const updatePost = async (payload: UpdatePostProps) => {
+        const res = await api.patch("/posts", payload);
+        return res;
+    }
+
     return {
         createPost,
-        fetchAllPosts   
+        fetchAllPosts,
+        updatePost
     }
 }
 

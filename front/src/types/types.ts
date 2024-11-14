@@ -23,3 +23,8 @@ export type GridPostProps = {
     createdAt: string;
     updatedAt: string;
 }
+
+export type UpdatePostProps = {
+    id: number;
+    content: string;
+}
