@@ -66,5 +66,12 @@ namespace api.Controllers
             return Ok(new { data = new { token } });
         }
 
+        [HttpGet("username/{username}")]
+        public async Task<ActionResult<UserModel>> GetByUsername(string username)
+        {
+            var user = await _userService.GetByUsername(username);
+            return Ok(new { data = user });
+        }
+
     }
 }

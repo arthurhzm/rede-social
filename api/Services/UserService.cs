@@ -75,6 +75,21 @@ namespace api.Services
             return newToken;
         }
 
+        public async Task<ProfileDTO> GetByUsername(string username)
+        {
+            var user = await _context.Users
+                .Include(u => u.Posts)
+                .FirstOrDefaultAsync(u => u.Username == username)
+                ?? throw new Exception("Usuário não encontrado");
+
+            return new ProfileDTO
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Posts = user.Posts.Select(p => new ProfilePostsDTO { Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt }).ToList()
+            };
+        }
+
         public string GenerateJwtToken(UserModel user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

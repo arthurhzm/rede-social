@@ -28,3 +28,15 @@ export type UpdatePostProps = {
     id: number;
     content: string;
 }
+
+export type ProfilePostsProps = {
+    id: number;
+    username: string;
+    posts: [
+        {
+            id: number;
+            content: string;
+            createdAt: string;
+        }
+    ]
+}

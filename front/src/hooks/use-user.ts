@@ -19,10 +19,16 @@ const useUser = () => {
         return res;
     }
 
+    const getByUsername = async (username: string) => {
+        const res = await api.get(`/users/username/${username}`);
+        return res;
+    }
+
     return {
         createUser,
         authenticateUser,
-        refreshToken
+        refreshToken,
+        getByUsername
     }
 }
 
