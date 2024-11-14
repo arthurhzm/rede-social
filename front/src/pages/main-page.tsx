@@ -10,15 +10,8 @@ import { addPost, removePost, setPosts, updatePost } from "../store/slices/posts
 import { RootState } from "../store/store";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../routes/routes";
-
-
-function LeftColumn() {
-    return (
-        <Col md={3}>
-            <h1>Left Column</h1>
-        </Col>
-    )
-}
+import LeftColumn from "../components/LeftColumn";
+import RightColumn from "../components/RightColumn";
 
 function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -222,13 +215,6 @@ function MainColumn() {
     )
 }
 
-function RightColumn() {
-    return (
-        <Col md={3}>
-            <h1>Right Column</h1>
-        </Col>
-    )
-}
 
 export default function MainPage() {
     return (
