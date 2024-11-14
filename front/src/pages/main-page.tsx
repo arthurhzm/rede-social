@@ -1,10 +1,10 @@
+import { Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Button, Col, FormControl, Row } from "react-bootstrap"
-import usePost from "../hooks/use-post";
+import { Button, Col, Dropdown, FormControl, Row } from "react-bootstrap";
 import { useToast } from "../contexts/ToastContext";
-import { GridPostProps, PostProps } from "../types/types";
 import { formatDate } from "../functions/utils";
-import { EllipsisVertical } from "lucide-react";
+import usePost from "../hooks/use-post";
+import { GridPostProps } from "../types/types";
 
 function LeftColumn() {
     return (
@@ -15,7 +15,12 @@ function LeftColumn() {
 }
 
 
-function ExpandingTextarea({ content, setContent }: { content: string; setContent: React.Dispatch<React.SetStateAction<string>> }) {
+type ExpandingTextareaProps = {
+    content: string;
+    setContent: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
     const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -96,9 +101,11 @@ function PostContainer() {
 
 function Posts() {
 
+    const { fetchAllPosts } = usePost();
     const [posts, setPosts] = useState<GridPostProps[]>([]);
     const [userSession, setUserSession] = useState<number>(0);
-    const { fetchAllPosts } = usePost();
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [content, setContent] = useState<string>('');
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -110,6 +117,19 @@ function Posts() {
 
         fetchPosts();
     }, []);
+
+    const toggleEdit = () => {
+        setIsEditing(!isEditing);
+        setContent("");
+    }
+
+    const handleSaveChanges = () => {
+        toggleEdit()
+    }
+
+    const handleDiscardChanges = () => {
+        toggleEdit()
+    }
 
     return (
         <>
@@ -123,19 +143,52 @@ function Posts() {
                             {formatDate(post.createdAt, 'BR')}
                         </Col>
                         <Col md={"auto"}>
-                            {userSession === post.userId && <EllipsisVertical />}
+                            {userSession === post.userId && (
+                                <Dropdown>
+                                    <Dropdown.Toggle
+                                        size="sm"
+                                        variant="outline-dark"
+                                        disabled={!!isEditing}>
+                                        <Settings />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => { setIsEditing(true); setContent(post.content) }}>Editar</Dropdown.Item>
+                                        <Dropdown.Item>Excluir</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            )}
                         </Col>
                     </Row>
                     <Row>
                         <Col md={12}>
-                            {post.content}
+                            {isEditing ? (
+                                <ExpandingTextarea
+                                    content={content}
+                                    setContent={setContent} />
+                            ) : (<span>{post.content}</span>)}
                         </Col>
+                        {isEditing && (
+                            <Col className="text-end mt-2">
+                                <Button
+                                    variant="outline-success"
+                                    onClick={handleSaveChanges}>
+                                    Editar
+                                </Button>
+                                <Button
+                                    className="ms-2"
+                                    variant="outline-danger"
+                                    onClick={handleDiscardChanges}>
+                                    Descartar
+                                </Button>
+                            </Col>
+                        )}
                     </Row>
                     <Row>
 
                     </Row>
-                </div>
-            ))}
+                </div >
+            ))
+            }
         </>
     )
 }

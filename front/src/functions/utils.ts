@@ -3,7 +3,7 @@ export function formatDate(date: string, country: string): string {
     let formattedDate: string;
 
     if (country === 'US') {
-        // Formato YYYY-MM-DD
+        
         formattedDate = dateObj.toISOString().split('T')[0];
     } else {
         // Formato DD/MM/YYYY
