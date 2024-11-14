@@ -14,12 +14,6 @@ function LeftColumn() {
     )
 }
 
-
-type ExpandingTextareaProps = {
-    content: string;
-    setContent: React.Dispatch<React.SetStateAction<string>>;
-}
-
 function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -49,19 +43,6 @@ function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
             />
         </Col>
     );
-}
-
-function PostsOptions() {
-    return (
-        <Row>
-            <Col md={6}>
-                <Button>Para você</Button>
-            </Col>
-            <Col md={6}>
-                <Button>Seguindo</Button>
-            </Col>
-        </Row>
-    )
 }
 
 function PostContainer() {
@@ -216,8 +197,7 @@ function Posts() {
 
 function MainColumn() {
     return (
-        <Col md={6}>
-            <PostsOptions />
+        <Col md={6}>    
             <PostContainer />
             <Posts />
         </Col>
@@ -232,7 +212,6 @@ function RightColumn() {
     )
 }
 
-
 export default function MainPage() {
     return (
         <Row>
@@ -241,4 +220,10 @@ export default function MainPage() {
             <RightColumn />
         </Row>
     )
+}
+
+
+type ExpandingTextareaProps = {
+    content: string;
+    setContent: React.Dispatch<React.SetStateAction<string>>;
 }
