@@ -123,8 +123,22 @@ function Posts() {
         setContent("");
     }
 
-    const handleSaveChanges = () => {
-        toggleEdit()
+    const handleDeletePost = (postId: number) => {
+        setPosts(posts.filter(post => post.id !== postId));
+        toggleEdit();
+    }
+
+    const handleSaveChanges = (post: GridPostProps) => {
+        if (post.content === content) {
+            toggleEdit();
+            return
+        }
+
+        if (content === '') {
+            handleDeletePost(post.id);
+        }
+
+        toggleEdit();
     }
 
     const handleDiscardChanges = () => {
@@ -133,7 +147,7 @@ function Posts() {
 
     return (
         <>
-            {posts.length && posts.map((post) => (
+            {!!posts.length && posts.map((post) => (
                 <div key={post.id}>
                     <Row>
                         <Col md={9}>
@@ -153,7 +167,7 @@ function Posts() {
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item onClick={() => { setIsEditing(true); setContent(post.content) }}>Editar</Dropdown.Item>
-                                        <Dropdown.Item>Excluir</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleDeletePost(post.id)}>Excluir</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             )}
@@ -171,7 +185,7 @@ function Posts() {
                             <Col className="text-end mt-2">
                                 <Button
                                     variant="outline-success"
-                                    onClick={handleSaveChanges}>
+                                    onClick={() => handleSaveChanges(post)}>
                                     Editar
                                 </Button>
                                 <Button
