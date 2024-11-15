@@ -115,6 +115,28 @@ namespace api.Services
             };
         }
 
+        public async Task FollowUser(int followerId, int followedId)
+        {
+            if (followerId == followedId)
+                throw new Exception("Você não pode seguir a si mesmo!");
+
+            var alreadyFollowing = await _context.Follows
+                .AnyAsync(f => f.FollowerId == followerId && f.FollowedId == followedId);
+
+            if (alreadyFollowing)
+                throw new Exception("Você já está seguindo este usuário.");
+
+            var follow = new FollowModel
+            {
+                FollowerId = followerId,
+                FollowedId = followedId
+            };
+
+            _context.Follows.Add(follow);
+            await _context.SaveChangesAsync();
+
+        }
+
         public string GenerateJwtToken(UserModel user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

@@ -4,7 +4,7 @@ const useProfile = () => {
     const { api } = useApi();
 
     const followUser = async (userId: number) => {
-        const res = await api.post(`/users/follow/${userId}`);
+        const res = await api.post(`/users/${userId}follow`);
         return res;
     }
 

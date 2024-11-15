@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api.DTO;
 using api.Models;
 using api.Services;
@@ -85,6 +86,15 @@ namespace api.Controllers
         {
             var user = await _userService.GetByUsername(username);
             return Ok(new { data = user });
+        }
+
+        [HttpPost("{followedId}/follow")]
+        public async Task<IActionResult> Follow(int followedId)
+        {
+            var followerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+            await _userService.FollowUser(followerId, followedId);
+            return Ok(new { message = "Agora você está seguindo este usuário." });
         }
 
     }

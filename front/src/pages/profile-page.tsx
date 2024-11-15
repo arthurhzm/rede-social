@@ -7,12 +7,16 @@ import RightColumn from "../components/RightColumn";
 import useUser from "../hooks/use-user";
 import { RootState } from "../store/store";
 import { ProfilePostsProps } from "../types/types";
+import useProfile from "../hooks/use-profile";
 
 
 function MainColumn() {
     const { username } = useParams<{ username: string }>();
     const { getByUsername } = useUser();
+    const { followUser } = useProfile();
     const userId = useSelector((state: RootState) => state.auth.userId);
+    console.log(userId);
+    
 
     const [profile, setProfile] = useState<ProfilePostsProps | null>(null);
 
@@ -31,7 +35,7 @@ function MainColumn() {
         if (!profile) return;
 
         try {
-            // await followUser(profile.id);
+            await followUser(profile.id);
         } catch (error) {
             console.log(error);
         }
