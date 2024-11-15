@@ -13,9 +13,7 @@ function MainColumn() {
     const { username } = useParams<{ username: string }>();
     const { getByUsername } = useUser();
     const userId = useSelector((state: RootState) => state.auth.userId);
-    console.log(userId);
     
-
     const [profile, setProfile] = useState<ProfilePostsProps | null>(null);
 
     useEffect(() => {

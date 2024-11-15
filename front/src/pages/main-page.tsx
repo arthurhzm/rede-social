@@ -91,7 +91,7 @@ function Posts() {
     const navigate = useNavigate();
 
     const [userSession, setUserSession] = useState<number>(0);
-    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [isEditing, setIsEditing] = useState<boolean | number>(false);
     const [content, setContent] = useState<string>('');
     const posts = useSelector((state: RootState) => state.posts.posts);
 
@@ -112,7 +112,7 @@ function Posts() {
     }
 
     const toggleEdit = () => {
-        setIsEditing(!isEditing);
+        setIsEditing(false);
         setContent("");
     }
 
@@ -167,7 +167,7 @@ function Posts() {
                                         <Settings size={20} />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item onClick={() => { setIsEditing(true); setContent(post.content) }}>Editar</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => { setIsEditing(post.id); setContent(post.content) }}>Editar</Dropdown.Item>
                                         <Dropdown.Item onClick={() => handleDeletePost(post.id)}>Excluir</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
@@ -176,13 +176,13 @@ function Posts() {
                     </Row>
                     <Row>
                         <Col md={12}>
-                            {isEditing ? (
+                            {isEditing === post.id ? (
                                 <ExpandingTextarea
                                     content={content}
                                     setContent={setContent} />
                             ) : (<span>{post.content}</span>)}
                         </Col>
-                        {isEditing && (
+                        {isEditing === post.id && (
                             <Col className="text-end mt-2">
                                 <Button
                                     variant="outline-success"
