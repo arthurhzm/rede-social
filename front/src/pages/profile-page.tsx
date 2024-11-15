@@ -8,14 +8,15 @@ import useUser from "../hooks/use-user";
 import { RootState } from "../store/store";
 import { ProfilePostsProps } from "../types/types";
 import useProfile from "../hooks/use-profile";
+import { useToast } from "../contexts/ToastContext";
 
 
 function MainColumn() {
     const { username } = useParams<{ username: string }>();
     const { getByUsername } = useUser();
     const { followUser } = useProfile();
+    const { showSuccess } = useToast()
     const userId = useSelector((state: RootState) => state.auth.userId);
-    console.log(userId);
 
 
     const [profile, setProfile] = useState<ProfilePostsProps | null>(null);
@@ -36,6 +37,7 @@ function MainColumn() {
 
         try {
             await followUser(profile.id);
+            showSuccess("Agora você está seguindo " + profile.username);
         } catch (error) {
             console.log(error);
         }

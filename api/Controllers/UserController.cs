@@ -92,14 +92,23 @@ namespace api.Controllers
         [HttpPost("{followedId}/follow")]
         public async Task<IActionResult> Follow(int followedId)
         {
-            var followerId = User.FindFirst(ClaimTypes.Name)?.Value;
+            try
+            {
+                var followerId = User.FindFirst(ClaimTypes.Name)?.Value;
 
                 if (followerId.IsNullOrEmpty())
                 {
                     return Unauthorized(new { message = "Usuário não autenticado" });
                 }
-            await _userService.FollowUser(int.Parse(followerId), followedId);
-            return Ok(new { message = "Agora você está seguindo este usuário." });
+                await _userService.FollowUser(int.Parse(followerId), followedId);
+                return Ok(new { message = "Agora você está seguindo este usuário." });
+
+            }
+            catch (System.Exception e)
+            {
+
+                return BadRequest(new { message = e.Message });
+            }
         }
 
     }
