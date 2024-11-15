@@ -14,6 +14,11 @@ const useUser = () => {
         return res;
     }
 
+    const logoutUser = async () => {
+        const res = await api.post("/users/logout");
+        return res;
+    }
+
     const refreshToken = async () => {
         const res = await api.post("/users/refresh-token");
         return res;
@@ -27,6 +32,7 @@ const useUser = () => {
     return {
         createUser,
         authenticateUser,
+        logoutUser,
         refreshToken,
         getByUsername
     }
