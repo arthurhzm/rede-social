@@ -5,6 +5,7 @@ using System.Text;
 using api.Data;
 using api.DTO;
 using api.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -60,6 +61,18 @@ namespace api.Services
             await _context.SaveChangesAsync();
 
             return (token, refreshToken);
+        }
+
+        public async Task Logout(string refreshToken)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            if (user == null)
+            {
+                throw new Exception("Token inválido");
+            }
+
+            user.RefreshToken = string.Empty;
+            await _context.SaveChangesAsync();
         }
 
         public async Task<string> GetUserByRefreshToken(string refreshToken)

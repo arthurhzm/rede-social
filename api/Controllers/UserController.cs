@@ -66,6 +66,20 @@ namespace api.Controllers
             return Ok(new { data = new { token } });
         }
 
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized(new { message = "Token inválido" });
+            }
+
+            await _userService.Logout(refreshToken);
+            return Ok(new { message = "Logout realizado com sucesso" });
+        }
+
         [HttpGet("username/{username}")]
         public async Task<ActionResult<UserModel>> GetByUsername(string username)
         {
