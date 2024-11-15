@@ -40,9 +40,21 @@ namespace api.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return user;
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao salvar usuário: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Erro interno: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
 
         public async Task<(string token, string refreshToken)> Authenticate(LoginUserDTO model)
