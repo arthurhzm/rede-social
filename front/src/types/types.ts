@@ -31,6 +31,7 @@ export type UpdatePostProps = {
 
 export type ProfilePostsProps = {
     id: number
+    followers: number;
     username: string;
     posts: [
         {

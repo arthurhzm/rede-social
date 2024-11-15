@@ -107,11 +107,15 @@ namespace api.Services
                 .FirstOrDefaultAsync(u => u.Username == username)
                 ?? throw new Exception("Usuário não encontrado");
 
+            var followersCount = await _context.Follows.CountAsync(f => f.FollowedId == user.Id);
+
             return new ProfileDTO
             {
                 Id = user.Id,
                 Username = user.Username,
-                Posts = user.Posts.Select(p => new ProfilePostsDTO { Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt }).ToList()
+                Posts = user.Posts.Select(p => new ProfilePostsDTO { Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt }).ToList(),
+                Followers = followersCount
+
             };
         }
 

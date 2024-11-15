@@ -18,7 +18,6 @@ function MainColumn() {
     const { showSuccess } = useToast()
     const userId = useSelector((state: RootState) => state.auth.userId);
 
-
     const [profile, setProfile] = useState<ProfilePostsProps | null>(null);
 
     useEffect(() => {
@@ -54,6 +53,7 @@ function MainColumn() {
                 <Col md={"auto"}>Foto de perfil</Col>
                 <Col className="d-flex gap-2">
                     <span>@{username}</span>
+                    <span>{profile?.followers} seguidores</span>
                     {profile && userId == profile.id && <button>Editar perfil</button>}
                     {profile && userId != profile.id && <Button onClick={handleFollow}>Seguir</Button>}
                 </Col>
