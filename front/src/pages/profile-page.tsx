@@ -16,7 +16,7 @@ function MainColumn() {
     const { followUser } = useProfile();
     const userId = useSelector((state: RootState) => state.auth.userId);
     console.log(userId);
-    
+
 
     const [profile, setProfile] = useState<ProfilePostsProps | null>(null);
 

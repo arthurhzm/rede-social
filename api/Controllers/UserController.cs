@@ -3,6 +3,7 @@ using api.DTO;
 using api.Models;
 using api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api.Controllers
 {
@@ -91,9 +92,13 @@ namespace api.Controllers
         [HttpPost("{followedId}/follow")]
         public async Task<IActionResult> Follow(int followedId)
         {
-            var followerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var followerId = User.FindFirst(ClaimTypes.Name)?.Value;
 
-            await _userService.FollowUser(followerId, followedId);
+                if (followerId.IsNullOrEmpty())
+                {
+                    return Unauthorized(new { message = "Usuário não autenticado" });
+                }
+            await _userService.FollowUser(int.Parse(followerId), followedId);
             return Ok(new { message = "Agora você está seguindo este usuário." });
         }
 
