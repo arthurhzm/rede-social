@@ -10,6 +10,8 @@ namespace api.Data
         public DbSet<UserModel> Users { get; set; }
         public DbSet<PostModel> Posts { get; set; }
 
+        public DbSet<FollowModel> Follows { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -20,6 +22,8 @@ namespace api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<UserModel>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -28,7 +32,22 @@ namespace api.Data
                 .HasIndex(u => u.Username)
                 .IsUnique();
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<FollowModel>()
+                .HasKey(f => new { f.FollowerId, f.FollowedId }); 
+
+            modelBuilder.Entity<FollowModel>()
+                .HasOne(f => f.Follower)
+                .WithMany(u => u.Following)
+                .HasForeignKey(f => f.FollowerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FollowModel>()
+                .HasOne(f => f.Followed)
+                .WithMany(u => u.Followers)
+                .HasForeignKey(f => f.FollowedId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
         }
     }
 }

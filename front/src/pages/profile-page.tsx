@@ -1,11 +1,11 @@
+import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import LeftColumn from "../components/LeftColumn";
 import RightColumn from "../components/RightColumn";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
-import { useEffect, useState } from "react";
 import useUser from "../hooks/use-user";
+import { RootState } from "../store/store";
 import { ProfilePostsProps } from "../types/types";
 
 
@@ -32,7 +32,6 @@ function MainColumn() {
 
         try {
             // await followUser(profile.id);
-            // setProfile({ ...profile, followers: profile.followers + 1 });
         } catch (error) {
             console.log(error);
         }
@@ -47,7 +46,7 @@ function MainColumn() {
             </Row>
             <Row>
                 <Col md={"auto"}>Foto de perfil</Col>
-                <Col>
+                <Col className="d-flex gap-2">
                     <span>@{username}</span>
                     {profile && userId == profile.id && <button>Editar perfil</button>}
                     {profile && userId != profile.id && <Button onClick={handleFollow}>Seguir</Button>}
