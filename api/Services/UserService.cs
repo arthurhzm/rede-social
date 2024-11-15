@@ -5,6 +5,7 @@ using System.Text;
 using api.Data;
 using api.DTO;
 using api.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -139,6 +140,32 @@ namespace api.Services
             _context.Follows.Add(follow);
             await _context.SaveChangesAsync();
 
+        }
+
+        public async Task<List<ProfileDTO>> GetFollowers(int userId)
+        {
+            var followers = await _context.Follows
+            .Where(f => f.FollowedId == userId)
+            .Include(f => f.Follower.Posts)
+            .Select(f => f.Follower)
+            .ToListAsync();
+
+            var followerProfiles = new List<ProfileDTO>();
+
+            foreach (var follower in followers)
+            {
+                var followersCount = await _context.Follows.CountAsync(f => f.FollowedId == follower.Id);
+
+                followerProfiles.Add(new ProfileDTO
+                {
+                    Id = follower.Id,
+                    Username = follower.Username,
+                    Posts = follower.Posts.Select(p => new ProfilePostsDTO { Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt }).ToList(),
+                    Followers = followersCount
+                });
+            }
+
+            return followerProfiles;
         }
 
         public string GenerateJwtToken(UserModel user)

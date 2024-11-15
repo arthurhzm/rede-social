@@ -111,5 +111,11 @@ namespace api.Controllers
             }
         }
 
+        [HttpGet("{id}/followers")]
+        public async Task<ActionResult<int>> GetFollowers(int id)
+        {
+            var followers = await _userService.GetFollowers(id);
+            return Ok(new { data = followers });
+        }
     }
 }

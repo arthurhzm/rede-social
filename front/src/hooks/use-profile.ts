@@ -8,8 +8,14 @@ const useProfile = () => {
         return res;
     }
 
+    const getFollowers = async (userId: number) => {
+        const res = await api.get(`/users/${userId}/followers`);
+        return res;
+    }
+
     return {
-        followUser
+        followUser,
+        getFollowers
     }
 }
 
