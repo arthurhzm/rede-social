@@ -1,6 +1,6 @@
 import { Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Button, Col, Dropdown, FormControl, Row } from "react-bootstrap";
+import { Button, Col, Container, Dropdown, FormControl, Row } from "react-bootstrap";
 import { useToast } from "../contexts/ToastContext";
 import { formatDate } from "../functions/utils";
 import usePost from "../hooks/use-post";
@@ -220,11 +220,13 @@ function MainColumn() {
 
 export default function MainPage() {
     return (
-        <Row>
-            <LeftColumn />
-            <MainColumn />
-            <RightColumn />
-        </Row>
+        <Container fluid>
+            <Row>
+                <LeftColumn />
+                <MainColumn />
+                <RightColumn />
+            </Row>
+        </Container>
     )
 }
 

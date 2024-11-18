@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import LeftColumn from "../components/LeftColumn";
 import RightColumn from "../components/RightColumn";
+import { useToast } from "../contexts/ToastContext";
+import useProfile from "../hooks/use-profile";
 import useUser from "../hooks/use-user";
 import { RootState } from "../store/store";
 import { ProfilePostsProps } from "../types/types";
-import useProfile from "../hooks/use-profile";
-import { useToast } from "../contexts/ToastContext";
 
 
 function MainColumn() {

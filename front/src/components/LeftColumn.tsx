@@ -1,4 +1,4 @@
-import { DoorOpen } from "lucide-react";
+import { DoorOpen, Home, LucideIcon } from "lucide-react";
 import { Button, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -16,14 +16,17 @@ export default function LeftColumn() {
     const { removeToken } = useAuth();
     const dispatch = useDispatch();
 
+    const handleHome = () => {
+        navigate(PATH.home);
+    }
     const handleLogout = async () => {
         try {
             await logoutUser();
             removeToken();
-            dispatch(resetUserId()); 
+            dispatch(resetUserId());
             dispatch(resetPosts());
             navigate(PATH.login);
-            persistor.purge(); 
+            persistor.purge();
         } catch (error) {
             console.log(error);
         }
@@ -31,13 +34,32 @@ export default function LeftColumn() {
 
     return (
         <Col md={3}>
-            <div>
-                <Button
-                    variant="outline-dark"
-                    onClick={handleLogout}>
-                    <DoorOpen /> Sair
-                </Button>
-            </div>
+            <LeftColumnIcon
+                Icon={Home}
+                text="Home"
+                onClick={handleHome} />
+            <LeftColumnIcon
+                Icon={DoorOpen}
+                text="Sair"
+                onClick={handleLogout} />
         </Col>
+    )
+}
+
+type LeftColumnProps = {
+    onClick: () => void;
+    Icon: LucideIcon;
+    text: string;
+}
+
+function LeftColumnIcon({ onClick, Icon, text }: LeftColumnProps) {
+    return (
+        <div>
+            <Button
+                variant="outline-dark"
+                onClick={onClick}>
+                <Icon /> {text}
+            </Button>
+        </div>
     )
 }
