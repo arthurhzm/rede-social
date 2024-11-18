@@ -33,11 +33,11 @@ export type ProfilePostsProps = {
     id: number
     followers: number;
     username: string;
-    posts: [
-        {
-            id: number;
-            content: string;
-            createdAt: string;
-        }
-    ]
+    posts: BasePostsProps[]
+}
+
+export type BasePostsProps = {
+    id: number;
+    content: string;
+    createdAt: string;
 }

@@ -1,49 +1,19 @@
 import { Settings } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Button, Col, Container, Dropdown, FormControl, Row } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Col, Container, Dropdown, Row } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import ExpandingTextarea from "../components/ExpandingTextarea";
+import LeftColumn from "../components/LeftColumn";
+import RightColumn from "../components/RightColumn";
 import { useToast } from "../contexts/ToastContext";
 import { formatDate } from "../functions/utils";
 import usePost from "../hooks/use-post";
-import { GridPostProps } from "../types/types";
-import { useDispatch, useSelector } from "react-redux";
+import { PATH } from "../routes/routes";
+import { setUserId } from "../store/slices/authSlice";
 import { addPost, removePost, setPosts, updatePost } from "../store/slices/postsSlice";
 import { RootState } from "../store/store";
-import { useNavigate } from "react-router-dom";
-import { PATH } from "../routes/routes";
-import LeftColumn from "../components/LeftColumn";
-import RightColumn from "../components/RightColumn";
-import { setUserId } from "../store/slices/authSlice";
-
-function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
-    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-    const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const textarea = textareaRef.current;
-        setContent(event.currentTarget.value);
-
-        if (!textarea) return;
-
-        textarea.style.height = 'auto';
-        textarea.style.height = `${textarea.scrollHeight}px`;
-    };
-
-    return (
-        <Col>
-            <FormControl
-                as="textarea"
-                ref={textareaRef}
-                onInput={handleInput}
-                placeholder="No que você está pensando?"
-                rows={1}
-                value={content}
-                style={{
-                    resize: 'none',
-                    overflow: 'hidden',
-                }}
-            />
-        </Col>
-    );
-}
+import { GridPostProps } from "../types/types";
 
 function PostContainer() {
     const { createPost } = usePost();
@@ -98,7 +68,7 @@ function Posts() {
     useEffect(() => {
         const fetchPosts = async () => {
             const res = await fetchAllPosts();
-            const { userId, posts } = res.data
+            const { userId, posts } = res.data;
             dispatch(setPosts(posts));
             setUserSession(userId);
             dispatch(setUserId(userId));
@@ -202,8 +172,7 @@ function Posts() {
 
                     </Row>
                 </div >
-            ))
-            }
+            ))}
         </>
     )
 }
@@ -228,9 +197,4 @@ export default function MainPage() {
             </Row>
         </Container>
     )
-}
-
-type ExpandingTextareaProps = {
-    content: string;
-    setContent: React.Dispatch<React.SetStateAction<string>>;
 }
