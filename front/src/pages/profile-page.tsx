@@ -66,6 +66,10 @@ function MainColumn() {
         }
     }
 
+    const profileFollowers = () => {
+        console.log(followers);
+    }
+
     if (loading) return <h1>Carregando...</h1>;
 
     return (
@@ -79,7 +83,7 @@ function MainColumn() {
                 <Col md={"auto"}>Foto de perfil</Col>
                 <Col className="d-flex gap-2">
                     <span>@{username}</span>
-                    <span>{profile?.followers} seguidores</span>
+                    <span onClick={profileFollowers}>{profile?.followers} seguidores</span>
                     {profile && userId == profile.id && <button>Editar perfil</button>}
                     {profile && userId != profile.id && <Button onClick={toggleFollow}>{isFollowing ? 'Seguindo' : 'Seguir'}</Button>}
                 </Col>
