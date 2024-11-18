@@ -13,9 +13,15 @@ const useProfile = () => {
         return res;
     }
 
+    const unfollowUser = async (userId: number) => {
+        const res = await api.delete(`/users/${userId}/unfollow`);
+        return res;
+    }
+
     return {
         followUser,
-        getFollowers
+        getFollowers,
+        unfollowUser
     }
 }
 

@@ -14,7 +14,7 @@ import { useToast } from "../contexts/ToastContext";
 function MainColumn() {
     const { username } = useParams<{ username: string }>();
     const { getByUsername } = useUser();
-    const { followUser, getFollowers } = useProfile();
+    const { followUser, getFollowers, unfollowUser } = useProfile();
     const { showSuccess } = useToast()
     const userId = useSelector((state: RootState) => state.auth.userId);
 
@@ -52,8 +52,15 @@ function MainColumn() {
         if (!profile) return;
 
         try {
-            await followUser(profile.id);
-            showSuccess("Agora você está seguindo " + profile.username);
+            if (isFollowing) {
+                await unfollowUser(profile.id);
+            } else {
+                await followUser(profile.id);
+            }
+
+            const message = isFollowing ? "Você deixou de seguir " : "Agora você está seguindo ";
+            showSuccess(message + profile.username);
+            setProfile({ ...profile, followers: isFollowing ? profile.followers - 1 : profile.followers + 1 });
         } catch (error) {
             console.log(error);
         }

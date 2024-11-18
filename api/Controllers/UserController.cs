@@ -117,5 +117,27 @@ namespace api.Controllers
             var followers = await _userService.GetFollowers(id);
             return Ok(new { data = followers });
         }
+
+        [HttpDelete("{followedId}/unfollow")]
+        public async Task<IActionResult> Unfollow(int followedId)
+        {
+            try
+            {
+                var followerId = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (followerId.IsNullOrEmpty())
+                {
+                    return Unauthorized(new { message = "Usuário não autenticado" });
+                }
+                await _userService.UnfollowUser(int.Parse(followerId), followedId);
+                return Ok(new { message = "Você deixou de seguir este usuário." });
+
+            }
+            catch (System.Exception e)
+            {
+
+                return BadRequest(new { message = e.Message });
+            }
+        }
     }
 }

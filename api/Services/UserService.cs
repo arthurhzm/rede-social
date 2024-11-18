@@ -168,6 +168,18 @@ namespace api.Services
             return followerProfiles;
         }
 
+        public async Task UnfollowUser(int followerId, int followedId)
+        {
+            var follow = await _context.Follows
+                .FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FollowedId == followedId);
+
+            if (follow == null)
+                throw new Exception("Você não está seguindo este usuário.");
+
+            _context.Follows.Remove(follow);
+            await _context.SaveChangesAsync();
+        }
+
         public string GenerateJwtToken(UserModel user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
