@@ -14,7 +14,7 @@ import useUser from "../hooks/use-user";
 import { PATH } from "../routes/routes";
 import { removePost, updatePost } from "../store/slices/postsSlice";
 import { RootState } from "../store/store";
-import { BasePostsProps, ProfilePostsProps } from "../types/types";
+import { GridPostProps, ProfilePostsProps } from "../types/types";
 
 type PostsProps = {
     profile: ProfilePostsProps
@@ -29,7 +29,7 @@ function ProfilePosts({ profile }: PostsProps) {
 
     const [isEditing, setIsEditing] = useState<boolean | number>(false);
     const [content, setContent] = useState<string>("");
-    const [posts, setPosts] = useState<BasePostsProps[]>(profile.posts);
+    const [posts, setPosts] = useState<GridPostProps[]>(profile.posts);
 
     const handleProfileClick = (username: string) => {
         navigate(PATH.profile + '/' + username);
@@ -47,7 +47,7 @@ function ProfilePosts({ profile }: PostsProps) {
         setPosts(profile.posts.filter(post => post.id !== postId));
     }
 
-    const handleSaveChanges = async (post: BasePostsProps) => {
+    const handleSaveChanges = async (post: GridPostProps) => {
         if (post.content === content) {
             toggleEdit();
             return;
@@ -76,9 +76,9 @@ function ProfilePosts({ profile }: PostsProps) {
                 <div key={post.id}>
                     <Row>
                         <Col md={9}>
-                            <div onClick={() => handleProfileClick(profile.username)}>
+                            <div onClick={() => handleProfileClick(post.user.username)}>
                                 foto de perfil
-                                @{profile.username}
+                                @{post.user.username}
                             </div>
                         </Col>
                         <Col>

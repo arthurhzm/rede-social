@@ -114,7 +114,17 @@ namespace api.Services
             {
                 Id = user.Id,
                 Username = user.Username,
-                Posts = user.Posts.Select(p => new ProfilePostsDTO { Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt }).ToList(),
+                Posts = user.Posts.Select(p => new PostModel
+                {
+                    Id = p.Id,
+                    Content = p.Content,
+                    CreatedAt = p.CreatedAt,
+                    UserId = p.UserId,
+                    User = new UserModel
+                    {
+                        Username = p.User.Username
+                    }
+                }).ToList(),
                 Followers = followersCount
 
             };
@@ -160,7 +170,17 @@ namespace api.Services
                 {
                     Id = follower.Id,
                     Username = follower.Username,
-                    Posts = follower.Posts.Select(p => new ProfilePostsDTO { Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt }).ToList(),
+                    Posts = follower.Posts.Select(p => new PostModel
+                    {
+                        Id = p.Id,
+                        Content = p.Content,
+                        CreatedAt = p.CreatedAt,
+                        UserId = p.UserId,
+                        User = new UserModel
+                        {
+                            Username = p.User.Username
+                        }
+                    }).ToList(),
                     Followers = followersCount
                 });
             }

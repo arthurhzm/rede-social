@@ -33,11 +33,5 @@ export type ProfilePostsProps = {
     id: number
     followers: number;
     username: string;
-    posts: BasePostsProps[]
-}
-
-export type BasePostsProps = {
-    id: number;
-    content: string;
-    createdAt: string;
+    posts: GridPostProps[]
 }
