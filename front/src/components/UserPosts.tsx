@@ -1,4 +1,4 @@
-import { Settings } from "lucide-react";
+import { Heart, Settings } from "lucide-react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -92,7 +92,9 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
                         )}
                     </Row>
                     <Row>
-
+                        <Col md={"auto"}>
+                            <Heart /> <small>Curtir</small> 
+                        </Col>
                     </Row>
                 </div >
             ))}

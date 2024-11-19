@@ -9,8 +9,8 @@ namespace api.Data
 
         public DbSet<UserModel> Users { get; set; }
         public DbSet<PostModel> Posts { get; set; }
-
         public DbSet<FollowModel> Follows { get; set; }
+        public DbSet<LikeModel> Likes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,7 +33,7 @@ namespace api.Data
                 .IsUnique();
 
             modelBuilder.Entity<FollowModel>()
-                .HasKey(f => new { f.FollowerId, f.FollowedId }); 
+                .HasKey(f => new { f.FollowerId, f.FollowedId });
 
             modelBuilder.Entity<FollowModel>()
                 .HasOne(f => f.Follower)
@@ -46,6 +46,21 @@ namespace api.Data
                 .WithMany(u => u.Followers)
                 .HasForeignKey(f => f.FollowedId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<LikeModel>()
+                .HasKey(l => l.Id);
+
+            modelBuilder.Entity<LikeModel>()
+                .HasOne(l => l.Post)
+                .WithMany(p => p.Likes)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<LikeModel>()
+                .HasOne(l => l.User)
+                .WithMany(u => u.Likes)
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
         }

@@ -10,6 +10,8 @@ namespace api.Models
 
         public UserModel User { get; set; }
 
+        public List<LikeModel> Likes { get; set; } = new List<LikeModel>();
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
