@@ -3,7 +3,7 @@ import { Col, FormControl } from "react-bootstrap";
 
 type ExpandingTextareaProps = {
     content: string;
-    setContent: React.Dispatch<React.SetStateAction<string>>;
+    setContent: (content: string) => void;
 }
 
 export default function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {

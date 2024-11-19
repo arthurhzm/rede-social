@@ -1,17 +1,14 @@
-import { Settings } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Dropdown, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import ExpandingTextarea from "../components/ExpandingTextarea";
+import { useParams } from "react-router-dom";
 import LeftColumn from "../components/LeftColumn";
 import RightColumn from "../components/RightColumn";
+import UserPosts from "../components/UserPosts";
 import { useToast } from "../contexts/ToastContext";
-import { formatDate } from "../functions/utils";
 import usePost from "../hooks/use-post";
 import useProfile from "../hooks/use-profile";
 import useUser from "../hooks/use-user";
-import { PATH } from "../routes/routes";
 import { removePost, updatePost } from "../store/slices/postsSlice";
 import { RootState } from "../store/store";
 import { GridPostProps, ProfilePostsProps } from "../types/types";
@@ -21,8 +18,6 @@ type PostsProps = {
 }
 
 function ProfilePosts({ profile }: PostsProps) {
-    const userSession = useSelector((state: RootState) => state.auth.userId);
-    const navigate = useNavigate();
     const { showSuccess } = useToast();
     const dispatch = useDispatch();
     const { deletePost, patchPost } = usePost();
@@ -30,10 +25,6 @@ function ProfilePosts({ profile }: PostsProps) {
     const [isEditing, setIsEditing] = useState<boolean | number>(false);
     const [content, setContent] = useState<string>("");
     const [posts, setPosts] = useState<GridPostProps[]>(profile.posts);
-
-    const handleProfileClick = (username: string) => {
-        navigate(PATH.profile + '/' + username);
-    }
 
     const toggleEdit = () => {
         setIsEditing(false);
@@ -66,71 +57,16 @@ function ProfilePosts({ profile }: PostsProps) {
         toggleEdit();
     }
 
-    const handleDiscardChanges = () => {
-        toggleEdit()
-    }
 
     return (
-        <div>
-            {!!posts.length && posts.map((post) => (
-                <div key={post.id}>
-                    <Row>
-                        <Col md={9}>
-                            <div onClick={() => handleProfileClick(post.user.username)}>
-                                foto de perfil
-                                @{post.user.username}
-                            </div>
-                        </Col>
-                        <Col>
-                            {formatDate(post.createdAt, 'BR')}
-                        </Col>
-                        <Col md={"auto"}>
-                            {userSession === profile.id && (
-                                <Dropdown>
-                                    <Dropdown.Toggle
-                                        size="sm"
-                                        variant="outline-dark"
-                                        disabled={!!isEditing}>
-                                        <Settings size={20} />
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item onClick={() => { setIsEditing(post.id); setContent(post.content) }}>Editar</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => handleDeletePost(post.id)}>Excluir</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            )}
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md={12}>
-                            {isEditing === post.id ? (
-                                <ExpandingTextarea
-                                    content={content}
-                                    setContent={setContent} />
-                            ) : (<span>{post.content}</span>)}
-                        </Col>
-                        {isEditing === post.id && (
-                            <Col className="text-end mt-2">
-                                <Button
-                                    variant="outline-success"
-                                    onClick={() => handleSaveChanges(post)}>
-                                    Editar
-                                </Button>
-                                <Button
-                                    className="ms-2"
-                                    variant="outline-danger"
-                                    onClick={handleDiscardChanges}>
-                                    Descartar
-                                </Button>
-                            </Col>
-                        )}
-                    </Row>
-                    <Row>
-
-                    </Row>
-                </div >
-            ))}
-        </div>
+        <UserPosts
+            handleDeletePost={handleDeletePost}
+            handleSaveChanges={handleSaveChanges}
+            content={content}
+            setContent={setContent}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            posts={posts} />
     )
 }
 
