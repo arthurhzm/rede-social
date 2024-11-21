@@ -1,13 +1,14 @@
 import { Heart, HeartOff, Settings } from "lucide-react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../functions/utils";
+import usePost from "../hooks/use-post";
 import { PATH } from "../routes/routes";
 import { RootState } from "../store/store";
 import { GridPostProps } from "../types/types";
 import ExpandingTextarea from "./ExpandingTextarea";
-import usePost from "../hooks/use-post";
+import { setPosts } from "../store/slices/postsSlice";
 
 type UserPostsProps = {
     posts: GridPostProps[],
@@ -24,6 +25,7 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
     const navigate = useNavigate();
     const userSession = useSelector((state: RootState) => state.auth.userId);
     const { likePost, unlikePost } = usePost();
+    const dispatch = useDispatch();
 
     const handleProfileClick = (username: string) => {
         navigate(PATH.profile + '/' + username);
@@ -39,12 +41,27 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
     }
 
     const toggleLikePost = async (post: GridPostProps) => {
-        if (post.likes.some(l => l.userId == userSession)) {
-            await unlikePost(post.id);
-        } else {
-            await likePost(post.id);
-        }
-    }
+        const updatedPosts = posts.map(p => {
+            if (p.id === post.id) {
+                if (p.likes.some(l => l.userId === userSession)) {
+                    unlikePost(post.id);
+                    return {
+                        ...p,
+                        likes: p.likes.filter(l => l.userId !== userSession),
+                    };
+                } else {
+                    likePost(post.id);
+                    return {
+                        ...p,
+                        likes: [...p.likes, { userId: userSession }],
+                    };
+                }
+            }
+            return p;
+        });
+
+        dispatch(setPosts(updatedPosts));
+    };
 
     return (
         <div>
