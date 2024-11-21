@@ -42,18 +42,23 @@ namespace api.Services
         public async Task<PostModel[]> GetAll()
         {
             return await _context.Posts
-                .Include(p => p.User)
-                .Select(p => new PostModel
+            .Include(p => p.User)
+            .Include(p => p.Likes)
+            .Select(p => new PostModel
+            {
+                Id = p.Id,
+                Content = p.Content,
+                UserId = p.UserId,
+                User = new UserModel
                 {
-                    Id = p.Id,
-                    Content = p.Content,
-                    UserId = p.UserId,
-                    User = new UserModel
-                    {
-                        Username = p.User.Username
-                    }
-                })
-                .ToArrayAsync();
+                    Username = p.User.Username
+                },
+                Likes = p.Likes.Select(l => new LikeModel
+                {
+                    UserId = l.UserId
+                }).ToList()
+            })
+            .ToArrayAsync();
         }
 
         public async Task<PostModel> Update(UpdatePostDTO model)

@@ -19,7 +19,12 @@ export type GridPostProps = {
     userId: number;
     user: {
         username: string;
-    }
+    };
+    likes: [
+        {
+            userId: number;
+        }
+    ]
     createdAt: string;
     updatedAt: string;
 }

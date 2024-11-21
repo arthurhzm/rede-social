@@ -1,4 +1,4 @@
-import { Heart, Settings } from "lucide-react";
+import { Heart, HeartOff, Settings } from "lucide-react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -38,8 +38,12 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
         setContent("");
     }
 
-    const toggleLikePost = async (postId: number) => {
-        await likePost(postId);
+    const toggleLikePost = async (post: GridPostProps) => {
+        if (post.likes.some(l => l.userId == userSession)) {
+            console.log('dislike');
+        } else {
+            await likePost(post.id);
+        }
     }
 
     return (
@@ -100,8 +104,8 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
                     <Row>
                         <Col
                             md={"auto"}
-                            onClick={() => toggleLikePost(post.id)}>
-                            <Heart /> <small>Curtir</small>
+                            onClick={() => toggleLikePost(post)}>
+                            <b>{post.likes.length}</b> {post.likes.some(l => l.userId == userSession) ? <HeartOff className="text-danger" /> : <Heart className="text-danger" />}
                         </Col>
                     </Row>
                 </div >
