@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using api.DTO;
+using api.Filters;
 using api.Models;
 using api.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,6 +11,7 @@ namespace api.Controllers
 {
     [ApiController]
     [Route("posts")]
+    [ServiceFilter(typeof(AuthFilter))]
     public class PostController : ControllerBase
     {
         private readonly PostService _postService;
@@ -25,11 +27,6 @@ namespace api.Controllers
             try
             {
                 var userId = User.FindFirst(ClaimTypes.Name)?.Value;
-
-                if (userId.IsNullOrEmpty())
-                {
-                    return Unauthorized(new { message = "Usuário não autenticado" });
-                }
 
                 model.UserId = int.Parse(userId);
 
@@ -49,11 +46,6 @@ namespace api.Controllers
             {
                 var userId = User.FindFirst(ClaimTypes.Name)?.Value;
 
-                if (userId.IsNullOrEmpty())
-                {
-                    return Unauthorized(new { message = "Usuário não autenticado" });
-                }
-
                 var posts = await _postService.GetAll();
                 return Ok(new { data = new { userId = int.Parse(userId), posts } });
             }
@@ -68,13 +60,6 @@ namespace api.Controllers
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
-
-                if (userId.IsNullOrEmpty())
-                {
-                    return Unauthorized(new { message = "Usuário não autenticado" });
-                }
-
                 var post = await _postService.Update(model);
                 return post;
             }
@@ -90,13 +75,6 @@ namespace api.Controllers
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
-
-                if (userId.IsNullOrEmpty())
-                {
-                    return Unauthorized(new { message = "Usuário não autenticado" });
-                }
-
                 await _postService.Delete(id);
                 return NoContent();
             }

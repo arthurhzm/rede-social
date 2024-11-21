@@ -1,5 +1,6 @@
 using System.Text;
 using api.Data;
+using api.Filters;
 using api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ builder.Services.AddAuthentication(options =>
 var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(conn));
+builder.Services.AddScoped<AuthFilter>();
 
 // Add services to the container.
 

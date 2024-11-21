@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using api.DTO;
+using api.Filters;
 using api.Models;
 using api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -69,6 +70,7 @@ namespace api.Controllers
         }
 
         [HttpPost("logout")]
+        [ServiceFilter(typeof(AuthFilter))]
         public async Task<IActionResult> Logout()
         {
             var refreshToken = Request.Cookies["refreshToken"];
@@ -83,6 +85,7 @@ namespace api.Controllers
         }
 
         [HttpGet("username/{username}")]
+        [ServiceFilter(typeof(AuthFilter))]
         public async Task<ActionResult<UserModel>> GetByUsername(string username)
         {
             var user = await _userService.GetByUsername(username);
@@ -90,6 +93,7 @@ namespace api.Controllers
         }
 
         [HttpPost("{followedId}/follow")]
+        [ServiceFilter(typeof(AuthFilter))]
         public async Task<IActionResult> Follow(int followedId)
         {
             try
@@ -112,6 +116,7 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}/followers")]
+        [ServiceFilter(typeof(AuthFilter))]
         public async Task<ActionResult<int>> GetFollowers(int id)
         {
             var followers = await _userService.GetFollowers(id);
@@ -119,6 +124,7 @@ namespace api.Controllers
         }
 
         [HttpDelete("{followedId}/unfollow")]
+        [ServiceFilter(typeof(AuthFilter))]
         public async Task<IActionResult> Unfollow(int followedId)
         {
             try
