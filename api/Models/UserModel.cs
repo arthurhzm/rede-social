@@ -16,6 +16,8 @@ namespace api.Models
 
         public List<LikeModel> Likes { get; set; }
 
+        public List<CommentsModel> Comments { get; set; }
+
         public List<FollowModel> Followers { get; set; } = new();
         public List<FollowModel> Following { get; set; } = new();
 

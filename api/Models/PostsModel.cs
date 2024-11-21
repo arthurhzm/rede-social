@@ -12,6 +12,8 @@ namespace api.Models
 
         public List<LikeModel> Likes { get; set; } = new List<LikeModel>();
 
+        public List<CommentsModel> Comments { get; set; } = new List<CommentsModel>();
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }

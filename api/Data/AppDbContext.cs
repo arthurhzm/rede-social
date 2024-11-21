@@ -11,6 +11,7 @@ namespace api.Data
         public DbSet<PostModel> Posts { get; set; }
         public DbSet<FollowModel> Follows { get; set; }
         public DbSet<LikeModel> Likes { get; set; }
+        public DbSet<CommentsModel> Comments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,7 +25,7 @@ namespace api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserModel>() 
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
@@ -62,6 +63,20 @@ namespace api.Data
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<CommentsModel>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<CommentsModel>()
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(c => c.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CommentsModel>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }
