@@ -1,5 +1,5 @@
-import { Heart, HeartOff, Settings } from "lucide-react";
-import { Button, Col, Dropdown, Row } from "react-bootstrap";
+import { Heart, HeartOff, MessageCircle, Settings } from "lucide-react";
+import { Button, Col, Dropdown, Modal, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../functions/utils";
@@ -9,6 +9,31 @@ import { RootState } from "../store/store";
 import { GridPostProps } from "../types/types";
 import ExpandingTextarea from "./ExpandingTextarea";
 import { setPosts } from "../store/slices/postsSlice";
+import { useState } from "react";
+
+type CommentsModalProps = {
+    post: GridPostProps | null;
+    show: boolean;
+    onHide: () => void;
+}
+
+function CommentsModal({ post, show, onHide }: CommentsModalProps) {
+
+    if (!post) return null;
+
+    return (
+        <Modal
+            onHide={onHide}
+            show={show}
+            size="lg"
+            centered>
+            <Modal.Header closeButton>
+                <Modal.Title>Comentários</Modal.Title>
+            </Modal.Header>
+        </Modal>
+    )
+}
+
 
 type UserPostsProps = {
     posts: GridPostProps[],
@@ -26,6 +51,8 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
     const userSession = useSelector((state: RootState) => state.auth.userId);
     const { likePost, unlikePost } = usePost();
     const dispatch = useDispatch();
+    const [showComments, setShowComments] = useState(false);
+    const [selectedPost, setSelectedPost] = useState<GridPostProps | null>(null);
 
     const handleProfileClick = (username: string) => {
         navigate(PATH.profile + '/' + username);
@@ -61,6 +88,16 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
         });
 
         dispatch(setPosts(updatedPosts));
+    };
+
+    const handleOpenComments = (post: GridPostProps) => {
+        setSelectedPost(post);
+        setShowComments(true);
+    };
+
+    const handleCloseComments = () => {
+        setShowComments(false);
+        setSelectedPost(null);
     };
 
     return (
@@ -122,11 +159,20 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
                         <Col
                             md={"auto"}
                             onClick={() => toggleLikePost(post)}>
-                            <b>{post.likes.length}</b> {post.likes.some(l => l.userId == userSession) ? <HeartOff className="text-danger" /> : <Heart className="text-danger" />}
+                            {post.likes.some(l => l.userId == userSession) ? <HeartOff className="text-danger" /> : <Heart className="text-danger" />} <b>{post.likes.length}</b>
+                        </Col>
+                        <Col
+                            md={"auto"}
+                            onClick={() => { handleOpenComments(post); }}>
+                            <MessageCircle />
                         </Col>
                     </Row>
-                </div >
+                </div>
             ))}
+            <CommentsModal
+                post={selectedPost}
+                show={showComments}
+                onHide={handleCloseComments} />
         </div>
     )
 }
