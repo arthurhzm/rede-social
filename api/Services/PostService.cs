@@ -26,7 +26,7 @@ namespace api.Services
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
-            
+
             return new PostModel
             {
                 Id = post.Id,
@@ -81,6 +81,20 @@ namespace api.Services
 
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
+            return new OkResult();
+        }
+
+        public async Task<IActionResult> Like(LikePostDTO model)
+        {
+            if (await _context.Likes.AnyAsync(l => l.UserId == model.UserId && l.PostId == model.PostId))
+            {
+                throw new Exception("Você já curtiu este post");
+            }
+
+            var like = new LikeModel { PostId = model.PostId, UserId = model.UserId };
+            _context.Likes.Add(like);
+            await _context.SaveChangesAsync();
+
             return new OkResult();
         }
 

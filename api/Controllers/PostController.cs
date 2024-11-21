@@ -84,6 +84,23 @@ namespace api.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("{id}/like")]
+        public async Task<IActionResult> Like(int id)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+                var model = new LikePostDTO { PostId = id, UserId = int.Parse(userId) };
+                await _postService.Like(model);
+                return NoContent();
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
+
 
     }
 }
