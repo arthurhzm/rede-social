@@ -105,7 +105,7 @@ namespace api.Services
 
         public async Task<IActionResult> Unlike(LikePostDTO model)
         {
-            var like = await _context.Likes.FindAsync(model.PostId, model.UserId);
+            var like = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == model.PostId && l.UserId == model.UserId);
 
             if (like == null)
             {

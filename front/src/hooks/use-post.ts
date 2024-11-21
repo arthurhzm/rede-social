@@ -29,12 +29,18 @@ const usePost = () => {
         return res;
     }
 
+    const unlikePost = async (id: number) => {
+        const res = await api.delete(`/posts/${id}/like`);
+        return res;
+    }
+
     return {
         createPost,
         fetchAllPosts,
         patchPost,
         deletePost,
-        likePost
+        likePost,
+        unlikePost
     }
 }
 

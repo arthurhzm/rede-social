@@ -23,7 +23,7 @@ type UserPostsProps = {
 export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, content, setContent, isEditing, setIsEditing }: UserPostsProps) {
     const navigate = useNavigate();
     const userSession = useSelector((state: RootState) => state.auth.userId);
-    const { likePost } = usePost();
+    const { likePost, unlikePost } = usePost();
 
     const handleProfileClick = (username: string) => {
         navigate(PATH.profile + '/' + username);
@@ -40,7 +40,7 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
 
     const toggleLikePost = async (post: GridPostProps) => {
         if (post.likes.some(l => l.userId == userSession)) {
-            console.log('dislike');
+            await unlikePost(post.id);
         } else {
             await likePost(post.id);
         }
