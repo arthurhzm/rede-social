@@ -101,6 +101,23 @@ namespace api.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("{id}/like")]
+        public async Task<IActionResult> Unlike(int id)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+                var model = new LikePostDTO { PostId = id, UserId = int.Parse(userId) };
+                await _postService.Unlike(model);
+                return NoContent();
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
+
 
     }
 }

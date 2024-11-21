@@ -103,5 +103,20 @@ namespace api.Services
             return new OkResult();
         }
 
+        public async Task<IActionResult> Unlike(LikePostDTO model)
+        {
+            var like = await _context.Likes.FindAsync(model.PostId, model.UserId);
+
+            if (like == null)
+            {
+                throw new Exception("Você não curtiu este post");
+            }
+
+            _context.Likes.Remove(like);
+            await _context.SaveChangesAsync();
+
+            return new OkResult();
+        }
+
     }
 }
