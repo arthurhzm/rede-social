@@ -24,7 +24,17 @@ export type GridPostProps = {
         {
             userId: number;
         }
-    ]
+    ],
+    comments: [
+        {
+            id: number;
+            content: string;
+            userId: number;
+            user: {
+                username: string;
+            }
+        }
+    ],
     createdAt: string;
     updatedAt: string;
 }

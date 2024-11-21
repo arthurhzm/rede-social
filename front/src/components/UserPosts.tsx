@@ -1,5 +1,5 @@
-import { Heart, HeartOff, MessageCircle, Settings } from "lucide-react";
-import { Button, Col, Dropdown, Modal, Row } from "react-bootstrap";
+import { Heart, HeartOff, MessageCircle, Send, Settings } from "lucide-react";
+import { Button, Col, Dropdown, InputGroup, Modal, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../functions/utils";
@@ -9,7 +9,7 @@ import { RootState } from "../store/store";
 import { GridPostProps } from "../types/types";
 import ExpandingTextarea from "./ExpandingTextarea";
 import { setPosts } from "../store/slices/postsSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type CommentsModalProps = {
     post: GridPostProps | null;
@@ -18,9 +18,18 @@ type CommentsModalProps = {
 }
 
 function CommentsModal({ post, show, onHide }: CommentsModalProps) {
+    const [content, setContent] = useState("");
+    const [charCount, setCharCount] = useState(0);
+
+    useEffect(() => {
+        setContent("");
+    }, [show]);
+
+    useEffect(() => {
+        setCharCount(content.length);
+    }, [content]);
 
     if (!post) return null;
-
     return (
         <Modal
             onHide={onHide}
@@ -30,6 +39,51 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
             <Modal.Header closeButton>
                 <Modal.Title>Comentários</Modal.Title>
             </Modal.Header>
+            <Modal.Body>
+                {post.comments.length > 0 ? post.comments.map(comment => (
+                    <div key={comment.id}>
+                        <Row>
+                            <Col md={12}>
+                                <div>
+                                    @{comment.user.username}
+                                </div>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md={12}>
+                                {comment.content}
+                            </Col>
+                        </Row>
+                    </div>
+                ))
+                    :
+                    <>
+                        <Row>
+                            <Col md={12} className="text-center">
+                                Nenhum comentário ainda, seja o primeiro a comentar!
+                            </Col>
+                        </Row>
+                    </>}
+                <Row className="mt-3">
+                    <Col md={12}>
+                        <InputGroup>
+                            <ExpandingTextarea
+                                placeholder="Escreva um comentário..."
+                                content={content}
+                                setContent={setContent}
+                                maxLength={125}
+                            />
+                            <Button
+                                variant="outline-dark">
+                                <Send />
+                            </Button>
+                        </InputGroup>
+                    </Col>
+                    <Col className="text-end me-5">
+                        <small>{charCount}/125</small>
+                    </Col>
+                </Row>
+            </Modal.Body>
         </Modal>
     )
 }
@@ -164,7 +218,7 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
                         <Col
                             md={"auto"}
                             onClick={() => { handleOpenComments(post); }}>
-                            <MessageCircle />
+                            <MessageCircle /> <b>{post.comments.length}</b>
                         </Col>
                     </Row>
                 </div>

@@ -44,6 +44,7 @@ namespace api.Services
             return await _context.Posts
             .Include(p => p.User)
             .Include(p => p.Likes)
+            .Include(p => p.Comments)
             .Select(p => new PostModel
             {
                 Id = p.Id,
@@ -56,6 +57,16 @@ namespace api.Services
                 Likes = p.Likes.Select(l => new LikeModel
                 {
                     UserId = l.UserId
+                }).ToList(),
+                Comments = p.Comments.Select(c => new CommentsModel
+                {
+                    Id = c.Id,
+                    Content = c.Content,
+                    UserId = c.UserId,
+                    User = new UserModel
+                    {
+                        Username = (from u in _context.Users where u.Id == c.UserId select u.Username).FirstOrDefault()
+                    }
                 }).ToList()
             })
             .ToArrayAsync();

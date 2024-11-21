@@ -1,15 +1,17 @@
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { Col, FormControl } from "react-bootstrap";
 
-type ExpandingTextareaProps = {
+interface ExpandingTextareaProps extends React.HtmlHTMLAttributes<HTMLTextAreaElement> {
     content: string;
     setContent: (content: string) => void;
+    placeholder?: string;
+    maxLength?: number;
 }
 
-export default function ExpandingTextarea({ content, setContent }: ExpandingTextareaProps) {
+export default function ExpandingTextarea({ content, setContent, placeholder, maxLength, ...props }: ExpandingTextareaProps) {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-    const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const textarea = textareaRef.current;
         setContent(event.currentTarget.value);
 
@@ -24,14 +26,16 @@ export default function ExpandingTextarea({ content, setContent }: ExpandingText
             <FormControl
                 as="textarea"
                 ref={textareaRef}
-                onInput={handleInput}
-                placeholder="No que você está pensando?"
+                onChange={handleChange}
+                placeholder={placeholder || "No que você está pensando?"}
                 rows={1}
                 value={content}
                 style={{
                     resize: 'none',
                     overflow: 'hidden',
                 }}
+                maxLength={maxLength}
+                {...props}
             />
         </Col>
     );
