@@ -24,11 +24,17 @@ const usePost = () => {
         return res;
     }
 
+    const likePost = async (id: number) => {
+        const res = await api.post(`/posts/${id}/like`);
+        return res;
+    }
+
     return {
         createPost,
         fetchAllPosts,
         patchPost,
-        deletePost
+        deletePost,
+        likePost
     }
 }
 

@@ -7,6 +7,7 @@ import { PATH } from "../routes/routes";
 import { RootState } from "../store/store";
 import { GridPostProps } from "../types/types";
 import ExpandingTextarea from "./ExpandingTextarea";
+import usePost from "../hooks/use-post";
 
 type UserPostsProps = {
     posts: GridPostProps[],
@@ -22,6 +23,7 @@ type UserPostsProps = {
 export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, content, setContent, isEditing, setIsEditing }: UserPostsProps) {
     const navigate = useNavigate();
     const userSession = useSelector((state: RootState) => state.auth.userId);
+    const { likePost } = usePost();
 
     const handleProfileClick = (username: string) => {
         navigate(PATH.profile + '/' + username);
@@ -34,6 +36,10 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
     const toggleEdit = () => {
         setIsEditing(false);
         setContent("");
+    }
+
+    const toggleLikePost = async (postId: number) => {
+        await likePost(postId);
     }
 
     return (
@@ -92,8 +98,10 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
                         )}
                     </Row>
                     <Row>
-                        <Col md={"auto"}>
-                            <Heart /> <small>Curtir</small> 
+                        <Col
+                            md={"auto"}
+                            onClick={() => toggleLikePost(post.id)}>
+                            <Heart /> <small>Curtir</small>
                         </Col>
                     </Row>
                 </div >
