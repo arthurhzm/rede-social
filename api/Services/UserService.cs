@@ -104,9 +104,10 @@ namespace api.Services
         public async Task<ProfileDTO> GetByUsername(string username)
         {
             var user = await _context.Users
-                .Include(u => u.Posts)
-                .FirstOrDefaultAsync(u => u.Username == username)
-                ?? throw new Exception("Usuário não encontrado");
+            .Include(u => u.Posts)
+            .ThenInclude(p => p.Likes)
+            .FirstOrDefaultAsync(u => u.Username == username)
+            ?? throw new Exception("Usuário não encontrado");
 
             var followersCount = await _context.Follows.CountAsync(f => f.FollowedId == user.Id);
 
@@ -123,10 +124,13 @@ namespace api.Services
                     User = new UserModel
                     {
                         Username = p.User.Username
-                    }
+                    },
+                    Likes = p.Likes.Select(l => new LikeModel
+                    {
+                        UserId = l.UserId
+                    }).ToList()
                 }).ToList(),
                 Followers = followersCount
-
             };
         }
 
