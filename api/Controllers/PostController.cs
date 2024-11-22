@@ -133,7 +133,11 @@ namespace api.Controllers
                     Id = comment.Id,
                     Content = comment.Content,
                     UserId = comment.UserId,
-                    CreatedAt = comment.createdAt
+                    CreatedAt = comment.createdAt,
+                    User = new UserDTO
+                    {
+                        Username = comment.User.Username
+                    }
                 };
                 return CreatedAtAction(nameof(Comment), new { data = response });
             }

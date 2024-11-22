@@ -138,7 +138,9 @@ namespace api.Services
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return comment;
+            return await _context.Comments
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.Id == comment.Id);
         }
 
     }
