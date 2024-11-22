@@ -1,4 +1,4 @@
-import { CreatePostProps, UpdatePostProps } from "../types/types";
+import { CreateCommentProps, CreatePostProps, UpdatePostProps } from "../types/types";
 import useApi from "./use-api";
 
 const usePost = () => {
@@ -32,6 +32,10 @@ const usePost = () => {
     const unlikePost = async (id: number) => {
         const res = await api.delete(`/posts/${id}/like`);
         return res;
+    }
+
+    const commentOnPost = async (payload: CreateCommentProps) => {
+        const res = await api.post(``)
     }
 
     return {

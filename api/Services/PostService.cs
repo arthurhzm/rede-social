@@ -129,13 +129,15 @@ namespace api.Services
             return new OkResult();
         }
 
-        public async Task<IActionResult> Comment(CommentsModel model)
+        public async Task<CommentsModel> Comment(CreateCommentDTO model)
         {
+            var post = await _context.Posts.FindAsync(model.PostId) ?? throw new Exception("Post não encontrado.");
+
             var comment = new CommentsModel { PostId = model.PostId, UserId = model.UserId, Content = model.Content };
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return new OkResult();
+            return comment;
         }
 
     }

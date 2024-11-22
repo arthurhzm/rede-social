@@ -50,3 +50,8 @@ export type ProfilePostsProps = {
     username: string;
     posts: GridPostProps[]
 }
+
+export type CreateCommentProps = {
+    id: number;
+    content: string;
+}
