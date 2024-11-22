@@ -63,6 +63,7 @@ namespace api.Services
                     Id = c.Id,
                     Content = c.Content,
                     UserId = c.UserId,
+                    createdAt = c.createdAt,
                     User = new UserModel
                     {
                         Username = (from u in _context.Users where u.Id == c.UserId select u.Username).FirstOrDefault()

@@ -35,7 +35,8 @@ const usePost = () => {
     }
 
     const commentOnPost = async (payload: CreateCommentProps) => {
-        const res = await api.post(``)
+        const res = await api.post(`/posts/${payload.id}/comment`, payload);
+        return res;
     }
 
     return {
@@ -44,7 +45,8 @@ const usePost = () => {
         patchPost,
         deletePost,
         likePost,
-        unlikePost
+        unlikePost,
+        commentOnPost
     }
 }
 

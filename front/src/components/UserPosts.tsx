@@ -20,6 +20,7 @@ type CommentsModalProps = {
 function CommentsModal({ post, show, onHide }: CommentsModalProps) {
     const [content, setContent] = useState("");
     const [charCount, setCharCount] = useState(0);
+    const { commentOnPost } = usePost();
 
     useEffect(() => {
         setContent("");
@@ -30,6 +31,12 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
     }, [content]);
 
     if (!post) return null;
+
+    const handleCommentPost = async () => {
+        if (!content || content === '' || content.length > 125) return;
+        await commentOnPost({ content, id: post.id });
+    }
+
     return (
         <Modal
             onHide={onHide}
@@ -74,7 +81,8 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
                                 maxLength={125}
                             />
                             <Button
-                                variant="outline-dark">
+                                variant="outline-dark"
+                                onClick={handleCommentPost}>
                                 <Send />
                             </Button>
                         </InputGroup>

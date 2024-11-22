@@ -120,14 +120,22 @@ namespace api.Controllers
 
         [HttpPost]
         [Route("{id}/comment")]
-        public async Task<IActionResult> Comment(int id, [FromBody] string content)
+        public async Task<IActionResult> Comment(int id, [FromBody] CreateCommentParamsDTO model)
         {
             try
             {
                 var userId = User.FindFirst(ClaimTypes.Name)?.Value;
-                var commentParams = new CreateCommentDTO { PostId = id, UserId = int.Parse(userId), Content = content };
-                var comment = _postService.Comment(commentParams);
-                return CreatedAtAction(nameof(Comment), new { data = comment });
+                var commentParams = new CreateCommentDTO { PostId = id, UserId = int.Parse(userId), Content = model.Content };
+                var comment = await _postService.Comment(commentParams);
+
+                var response = new CommentResponseDTO
+                {
+                    Id = comment.Id,
+                    Content = comment.Content,
+                    UserId = comment.UserId,
+                    CreatedAt = comment.createdAt
+                };
+                return CreatedAtAction(nameof(Comment), new { data = response });
             }
             catch (System.Exception e)
             {
