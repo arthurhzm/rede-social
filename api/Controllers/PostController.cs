@@ -118,6 +118,24 @@ namespace api.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("{id}/comment")]
+        public async Task<IActionResult> Comment([FromBody] CreateCommentDTO model)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+                var comment = new CommentsModel { PostId = model.PostId, UserId = int.Parse(userId), Content = model.Content };
+                _postService.Comment(comment);
+                return NoContent();
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+
+        }
+
 
     }
 }

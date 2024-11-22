@@ -129,5 +129,14 @@ namespace api.Services
             return new OkResult();
         }
 
+        public async Task<IActionResult> Comment(CommentsModel model)
+        {
+            var comment = new CommentsModel { PostId = model.PostId, UserId = model.UserId, Content = model.Content };
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return new OkResult();
+        }
+
     }
 }
