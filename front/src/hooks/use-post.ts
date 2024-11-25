@@ -39,6 +39,11 @@ const usePost = () => {
         return res;
     }
 
+    const editComment = async (payload: CreateCommentProps) => {
+        const res = await api.patch(`/posts/${payload.id}/comment`, payload);
+        return res;
+    }
+
     return {
         createPost,
         fetchAllPosts,
@@ -46,7 +51,8 @@ const usePost = () => {
         deletePost,
         likePost,
         unlikePost,
-        commentOnPost
+        commentOnPost,
+        editComment
     }
 }
 

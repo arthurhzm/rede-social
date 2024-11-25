@@ -62,8 +62,11 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
         setEditingContent("");
     }
 
-    const handleSaveChanges = (comment: PostCommentProps) => {
-        console.log(comment);
+    const handleSaveChanges = async (comment: PostCommentProps) => {
+        if (!editingContent || editingContent === '') {
+            await deleteComment(comment.id);
+            return;
+        }
     }
 
     return (
