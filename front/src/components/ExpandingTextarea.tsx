@@ -6,9 +6,10 @@ interface ExpandingTextareaProps extends React.HtmlHTMLAttributes<HTMLTextAreaEl
     setContent: (content: string) => void;
     placeholder?: string;
     maxLength?: number;
+    disabled?: boolean;
 }
 
-export default function ExpandingTextarea({ content, setContent, placeholder, maxLength, ...props }: ExpandingTextareaProps) {
+export default function ExpandingTextarea({ content, setContent, placeholder, maxLength, disabled, ...props }: ExpandingTextareaProps) {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -36,6 +37,7 @@ export default function ExpandingTextarea({ content, setContent, placeholder, ma
                 }}
                 maxLength={maxLength}
                 {...props}
+                disabled={disabled}
             />
         </Col>
     );

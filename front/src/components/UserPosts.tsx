@@ -1,17 +1,17 @@
 import { Heart, HeartOff, MessageCircle, Send, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button, Col, Dropdown, InputGroup, Modal, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../contexts/ToastContext";
 import { formatDate } from "../functions/utils";
+import useComment from "../hooks/use-comment";
 import usePost from "../hooks/use-post";
 import { PATH } from "../routes/routes";
-import { RootState } from "../store/store";
-import { GridPostProps } from "../types/types";
-import ExpandingTextarea from "./ExpandingTextarea";
 import { setPosts } from "../store/slices/postsSlice";
-import { useEffect, useState } from "react";
-import { useToast } from "../contexts/ToastContext";
-import useComment from "../hooks/use-comment";
+import { RootState } from "../store/store";
+import { GridPostProps, PostCommentProps } from "../types/types";
+import ExpandingTextarea from "./ExpandingTextarea";
 
 type CommentsModalProps = {
     post: GridPostProps | null;
@@ -20,15 +20,15 @@ type CommentsModalProps = {
 }
 
 function CommentsModal({ post, show, onHide }: CommentsModalProps) {
-    const [content, setContent] = useState("");
-    const [charCount, setCharCount] = useState(0);
     const { commentOnPost } = usePost();
     const { deleteComment } = useComment();
     const { showSuccess } = useToast();
     const userSession = useSelector((state: RootState) => state.auth.userId);
 
-    console.log(post);
-
+    const [content, setContent] = useState("");
+    const [editingContent, setEditingContent] = useState("");
+    const [charCount, setCharCount] = useState(0);
+    const [isEditing, setIsEditing] = useState<boolean | number>(false);
 
     useEffect(() => {
         setContent("");
@@ -47,10 +47,23 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
         setContent("");
     }
 
+    const handleEditComment = (comment: PostCommentProps) => {
+        setEditingContent(comment.content);
+        setIsEditing(comment.id);
+    }
+
     const handleDeleteComment = async (id: number) => {
         await deleteComment(id);
         showSuccess("Comentário excluído com sucesso");
-        setContent("");
+    }
+
+    const handleDiscardChanges = () => {
+        setIsEditing(false);
+        setEditingContent("");
+    }
+
+    const handleSaveChanges = (comment: PostCommentProps) => {
+        console.log(comment);
     }
 
     return (
@@ -65,7 +78,7 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
             <Modal.Body>
                 <Row style={{ maxHeight: '500px', overflowY: 'auto' }}>
                     {post.comments.length > 0 ? post.comments.map(comment => (
-                        <div key={comment.id}>
+                        <div key={comment.id} className="mt-2">
                             <Row>
                                 <Col>
                                     <div>
@@ -81,7 +94,7 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
                                                 <Settings size={20} />
                                             </Dropdown.Toggle>
                                             <Dropdown.Menu>
-                                                <Dropdown.Item>Editar</Dropdown.Item>
+                                                <Dropdown.Item onClick={() => handleEditComment(comment)}>Editar</Dropdown.Item>
                                                 <Dropdown.Item onClick={() => handleDeleteComment(comment.id)}>Excluir</Dropdown.Item>
                                             </Dropdown.Menu>
                                         </Dropdown>
@@ -90,8 +103,29 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
                             </Row>
                             <Row>
                                 <Col md={12}>
-                                    {comment.content}
+                                    {isEditing === comment.id ? (
+                                        <ExpandingTextarea
+                                            content={editingContent}
+                                            setContent={setEditingContent} />
+                                    ) : (<span>{comment.content}</span>)}
                                 </Col>
+                            </Row>
+                            <Row>
+                                {isEditing === comment.id && (
+                                    <Col className="text-end mt-2">
+                                        <Button
+                                            variant="outline-success"
+                                            onClick={() => handleSaveChanges(comment)}>
+                                            Editar
+                                        </Button>
+                                        <Button
+                                            className="ms-2"
+                                            variant="outline-danger"
+                                            onClick={handleDiscardChanges}>
+                                            Descartar
+                                        </Button>
+                                    </Col>
+                                )}
                             </Row>
                         </div>
                     ))
@@ -112,10 +146,12 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
                                 content={content}
                                 setContent={setContent}
                                 maxLength={125}
+                                disabled={!!isEditing}
                             />
                             <Button
                                 variant="outline-dark"
-                                onClick={handleCommentPost}>
+                                onClick={handleCommentPost}
+                                disabled={!!isEditing || content.length === 0}>
                                 <Send />
                             </Button>
                         </InputGroup>

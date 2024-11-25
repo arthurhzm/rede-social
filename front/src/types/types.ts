@@ -25,16 +25,7 @@ export type GridPostProps = {
             userId: number;
         }
     ],
-    comments: [
-        {
-            id: number;
-            content: string;
-            userId: number;
-            user: {
-                username: string;
-            }
-        }
-    ],
+    comments: PostCommentProps[],
     createdAt: string;
     updatedAt: string;
 }
@@ -54,4 +45,13 @@ export type ProfilePostsProps = {
 export type CreateCommentProps = {
     id: number;
     content: string;
+}
+
+export type PostCommentProps = {
+    id: number;
+    content: string;
+    userId: number;
+    user: {
+        username: string;
+    }
 }
