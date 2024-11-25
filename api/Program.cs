@@ -42,6 +42,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<CommentService>();
 
 builder.Services.AddCors(options =>
 {

@@ -23,6 +23,10 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
     const [charCount, setCharCount] = useState(0);
     const { commentOnPost } = usePost();
     const { showSuccess } = useToast();
+    const userSession = useSelector((state: RootState) => state.auth.userId);
+
+    console.log(post);
+
 
     useEffect(() => {
         setContent("");
@@ -51,30 +55,47 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
                 <Modal.Title>Comentários</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {post.comments.length > 0 ? post.comments.map(comment => (
-                    <div key={comment.id}>
-                        <Row>
-                            <Col md={12}>
-                                <div>
-                                    @{comment.user.username}
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md={12}>
-                                {comment.content}
-                            </Col>
-                        </Row>
-                    </div>
-                ))
-                    :
-                    <>
-                        <Row>
-                            <Col md={12} className="text-center">
-                                Nenhum comentário ainda, seja o primeiro a comentar!
-                            </Col>
-                        </Row>
-                    </>}
+                <Row style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                    {post.comments.length > 0 ? post.comments.map(comment => (
+                        <div key={comment.id}>
+                            <Row>
+                                <Col>
+                                    <div>
+                                        @{comment.user.username}
+                                    </div>
+                                </Col>
+                                <Col md="auto">
+                                    {comment.userId === userSession && (
+                                        <Dropdown>
+                                            <Dropdown.Toggle
+                                                size="sm"
+                                                variant="outline-dark">
+                                                <Settings size={20} />
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item>Editar</Dropdown.Item>
+                                                <Dropdown.Item>Excluir</Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    )}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col md={12}>
+                                    {comment.content}
+                                </Col>
+                            </Row>
+                        </div>
+                    ))
+                        :
+                        <>
+                            <Row>
+                                <Col md={12} className="text-center">
+                                    Nenhum comentário ainda, seja o primeiro a comentar!
+                                </Col>
+                            </Row>
+                        </>}
+                </Row>
                 <Row className="mt-3">
                     <Col md={12}>
                         <InputGroup>
