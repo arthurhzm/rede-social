@@ -11,6 +11,7 @@ import ExpandingTextarea from "./ExpandingTextarea";
 import { setPosts } from "../store/slices/postsSlice";
 import { useEffect, useState } from "react";
 import { useToast } from "../contexts/ToastContext";
+import useComment from "../hooks/use-comment";
 
 type CommentsModalProps = {
     post: GridPostProps | null;
@@ -22,6 +23,7 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
     const [content, setContent] = useState("");
     const [charCount, setCharCount] = useState(0);
     const { commentOnPost } = usePost();
+    const { deleteComment } = useComment();
     const { showSuccess } = useToast();
     const userSession = useSelector((state: RootState) => state.auth.userId);
 
@@ -42,6 +44,12 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
         if (!content || content === '' || content.length > 125) return;
         await commentOnPost({ content, id: post.id });
         showSuccess("Comentário realizado com sucesso");
+        setContent("");
+    }
+
+    const handleDeleteComment = async (id: number) => {
+        await deleteComment(id);
+        showSuccess("Comentário excluído com sucesso");
         setContent("");
     }
 
@@ -74,7 +82,7 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
                                             </Dropdown.Toggle>
                                             <Dropdown.Menu>
                                                 <Dropdown.Item>Editar</Dropdown.Item>
-                                                <Dropdown.Item>Excluir</Dropdown.Item>
+                                                <Dropdown.Item onClick={() => handleDeleteComment(comment.id)}>Excluir</Dropdown.Item>
                                             </Dropdown.Menu>
                                         </Dropdown>
                                     )}
