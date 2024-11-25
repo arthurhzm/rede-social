@@ -10,6 +10,7 @@ import { GridPostProps } from "../types/types";
 import ExpandingTextarea from "./ExpandingTextarea";
 import { setPosts } from "../store/slices/postsSlice";
 import { useEffect, useState } from "react";
+import { useToast } from "../contexts/ToastContext";
 
 type CommentsModalProps = {
     post: GridPostProps | null;
@@ -21,6 +22,7 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
     const [content, setContent] = useState("");
     const [charCount, setCharCount] = useState(0);
     const { commentOnPost } = usePost();
+    const { showSuccess } = useToast();
 
     useEffect(() => {
         setContent("");
@@ -35,6 +37,8 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
     const handleCommentPost = async () => {
         if (!content || content === '' || content.length > 125) return;
         await commentOnPost({ content, id: post.id });
+        showSuccess("Comentário realizado com sucesso");
+        setContent("");
     }
 
     return (
