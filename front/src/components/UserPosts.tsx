@@ -24,6 +24,7 @@ function CommentsModal({ postId, show, onHide, onUpdatePost }: CommentsModalProp
     const { commentOnPost } = usePost();
     const { deleteComment, editComment } = useComment();
     const { showSuccess } = useToast();
+    const navigate = useNavigate();
     const userSession = useSelector((state: RootState) => state.auth.userId);
 
     const [content, setContent] = useState("");
@@ -119,13 +120,13 @@ function CommentsModal({ postId, show, onHide, onUpdatePost }: CommentsModalProp
                         <div key={comment.id} className="mt-2">
                             <Row>
                                 <Col>
-                                    <div>
+                                    <div onClick={() => navigate(PATH.profile + '/' + comment.user.username)}>
                                         @{comment.user.username}
                                     </div>
                                 </Col>
-                                <Col md="auto">
+                                <Col>
                                     {comment.userId === userSession && (
-                                        <Dropdown>
+                                        <Dropdown style={{ position: 'absolute', zIndex: 500, right: 15 }}>
                                             <Dropdown.Toggle
                                                 size="sm"
                                                 variant="outline-dark">
@@ -145,7 +146,13 @@ function CommentsModal({ postId, show, onHide, onUpdatePost }: CommentsModalProp
                                         <ExpandingTextarea
                                             content={editingContent}
                                             setContent={setEditingContent} />
-                                    ) : (<span>{comment.content}</span>)}
+                                    ) : (
+                                        <span style={{
+                                            display: 'block',
+                                            maxWidth: '700px',
+                                            wordWrap: 'break-word',
+                                            overflowWrap: 'break-word'
+                                        }}>{comment.content}</span>)}
                                 </Col>
                             </Row>
                             <Row>
@@ -199,7 +206,7 @@ function CommentsModal({ postId, show, onHide, onUpdatePost }: CommentsModalProp
                     </Col>
                 </Row>
             </Modal.Body>
-        </Modal>
+        </Modal >
     )
 }
 
