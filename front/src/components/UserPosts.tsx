@@ -14,13 +14,13 @@ import { GridPostProps, PostCommentProps } from "../types/types";
 import ExpandingTextarea from "./ExpandingTextarea";
 
 type CommentsModalProps = {
-    post: GridPostProps | null;
+    postId: number | undefined;
     show: boolean;
     onHide: () => void;
     onUpdatePost: (updatedPost: GridPostProps) => void;
 }
 
-function CommentsModal({ post, show, onHide, onUpdatePost }: CommentsModalProps) {
+function CommentsModal({ postId, show, onHide, onUpdatePost }: CommentsModalProps) {
     const { commentOnPost } = usePost();
     const { deleteComment, editComment } = useComment();
     const { showSuccess } = useToast();
@@ -30,6 +30,10 @@ function CommentsModal({ post, show, onHide, onUpdatePost }: CommentsModalProps)
     const [editingContent, setEditingContent] = useState("");
     const [charCount, setCharCount] = useState(0);
     const [isEditing, setIsEditing] = useState<boolean | number>(false);
+
+    const post = useSelector((state: RootState) =>
+        state.posts.posts.find(p => p.id === postId)
+    );
 
     useEffect(() => {
         setContent("");
@@ -94,7 +98,7 @@ function CommentsModal({ post, show, onHide, onUpdatePost }: CommentsModalProps)
         };
 
         onUpdatePost(updatedPost);
-        
+
         setIsEditing(false);
         setEditingContent("");
         showSuccess("Comentário editado com sucesso");
@@ -342,7 +346,7 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
                 </div>
             ))}
             <CommentsModal
-                post={selectedPost}
+                postId={selectedPost?.id}
                 show={showComments}
                 onHide={handleCloseComments}
                 onUpdatePost={handleUpdatePostComments} />
