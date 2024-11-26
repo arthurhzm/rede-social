@@ -106,6 +106,8 @@ namespace api.Services
             var user = await _context.Users
             .Include(u => u.Posts)
             .ThenInclude(p => p.Likes)
+            .Include(u => u.Posts)
+            .ThenInclude(p => p.Comments)
             .FirstOrDefaultAsync(u => u.Username == username)
             ?? throw new Exception("Usuário não encontrado");
 
@@ -128,6 +130,17 @@ namespace api.Services
                     Likes = p.Likes.Select(l => new LikeModel
                     {
                         UserId = l.UserId
+                    }).ToList(),
+                    Comments = p.Comments.Select(c => new CommentsModel
+                    {
+                        Id = c.Id,
+                        Content = c.Content,
+                        UserId = c.UserId,
+                        createdAt = c.createdAt,
+                        User = new UserModel
+                        {
+                            Username = (from u in _context.Users where u.Id == c.UserId select u.Username).FirstOrDefault()
+                        }
                     }).ToList()
                 }).ToList(),
                 Followers = followersCount
