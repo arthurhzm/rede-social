@@ -1,5 +1,6 @@
 using api.Data;
 using api.DTO;
+using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ namespace api.Services
             _context = context;
         }
 
-        public async Task<IActionResult> Update(UpdateCommentDTO model)
+        public async Task<CommentsModel> Update(UpdateCommentDTO model)
         {
             var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == model.Id);
 
@@ -26,7 +27,9 @@ namespace api.Services
             comment.Content = model.Content;
             await _context.SaveChangesAsync();
 
-            return new OkResult();
+            return await _context.Comments
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.Id == comment.Id);
         }
         public async Task<IActionResult> Delete(int id)
         {

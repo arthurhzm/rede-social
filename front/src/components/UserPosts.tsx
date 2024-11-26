@@ -17,11 +17,12 @@ type CommentsModalProps = {
     post: GridPostProps | null;
     show: boolean;
     onHide: () => void;
+    onUpdatePost: (updatedPost: GridPostProps) => void;
 }
 
-function CommentsModal({ post, show, onHide }: CommentsModalProps) {
+function CommentsModal({ post, show, onHide, onUpdatePost }: CommentsModalProps) {
     const { commentOnPost } = usePost();
-    const { deleteComment } = useComment();
+    const { deleteComment, editComment } = useComment();
     const { showSuccess } = useToast();
     const userSession = useSelector((state: RootState) => state.auth.userId);
 
@@ -42,7 +43,16 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
 
     const handleCommentPost = async () => {
         if (!content || content === '' || content.length > 125) return;
-        await commentOnPost({ content, id: post.id });
+        const res = await commentOnPost({ content, id: post.id });
+        const newComment = res.data;
+
+        const updatedPost = {
+            ...post,
+            comments: [...post.comments, newComment]
+        }
+
+        onUpdatePost(updatedPost);
+
         showSuccess("Comentário realizado com sucesso");
         setContent("");
     }
@@ -55,6 +65,11 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
     const handleDeleteComment = async (id: number) => {
         await deleteComment(id);
         showSuccess("Comentário excluído com sucesso");
+        const updatedPost = {
+            ...post,
+            comments: post.comments.filter(c => c.id !== id), // Remove o comentário
+        };
+        onUpdatePost(updatedPost);
     }
 
     const handleDiscardChanges = () => {
@@ -64,9 +79,25 @@ function CommentsModal({ post, show, onHide }: CommentsModalProps) {
 
     const handleSaveChanges = async (comment: PostCommentProps) => {
         if (!editingContent || editingContent === '') {
-            await deleteComment(comment.id);
+            await handleDeleteComment(comment.id);
             return;
         }
+
+        const res = await editComment({ id: comment.id, content: editingContent });
+        const updatedComment = res.data;
+
+        const updatedPost = {
+            ...post,
+            comments: post.comments.map(c =>
+                c.id === updatedComment.id ? updatedComment : c
+            )
+        };
+
+        onUpdatePost(updatedPost);
+        
+        setIsEditing(false);
+        setEditingContent("");
+        showSuccess("Comentário editado com sucesso");
     }
 
     return (
@@ -201,6 +232,13 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
         setContent("");
     }
 
+    const handleUpdatePostComments = (updatedPost: GridPostProps) => {
+        const updatedPosts = posts.map(post =>
+            post.id === updatedPost.id ? updatedPost : post
+        );
+        dispatch(setPosts(updatedPosts)); // Atualiza o estado global (ou local se não usar Redux)
+    };
+
     const toggleLikePost = async (post: GridPostProps) => {
         const updatedPosts = posts.map(p => {
             if (p.id === post.id) {
@@ -306,7 +344,8 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
             <CommentsModal
                 post={selectedPost}
                 show={showComments}
-                onHide={handleCloseComments} />
+                onHide={handleCloseComments}
+                onUpdatePost={handleUpdatePostComments} />
         </div>
     )
 }

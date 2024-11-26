@@ -1,3 +1,4 @@
+import { CreateCommentProps } from "../types/types";
 import useApi from "./use-api";
 
 const useComment = () => {
@@ -8,8 +9,14 @@ const useComment = () => {
         return res;
     }
 
+    const editComment = async (payload: CreateCommentProps) => {
+        const res = await api.patch(`/comments`, payload);
+        return res;
+    }
+
     return {
-        deleteComment
+        deleteComment,
+        editComment
     }
 }
 
