@@ -1,4 +1,4 @@
-import { Heart, HeartOff, MessageCircle, Send, Settings } from "lucide-react";
+import { Heart, HeartOff, MessageCircle, Send, Settings, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button, Col, Dropdown, InputGroup, Modal, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +8,7 @@ import { formatDate } from "../functions/utils";
 import useComment from "../hooks/use-comment";
 import usePost from "../hooks/use-post";
 import { PATH } from "../routes/routes";
-import { setPosts } from "../store/slices/postsSlice";
+import { removePost, setPosts, updatePost } from "../store/slices/postsSlice";
 import { RootState } from "../store/store";
 import { GridPostProps, PostCommentProps } from "../types/types";
 import ExpandingTextarea from "./ExpandingTextarea";
@@ -118,15 +118,15 @@ function CommentsModal({ postId, show, onHide, onUpdatePost }: CommentsModalProp
                 <Row style={{ maxHeight: '500px', overflowY: 'auto' }}>
                     {post.comments.length > 0 ? post.comments.map(comment => (
                         <div key={comment.id} className="mt-2">
-                            <Row>
+                            <Row className="justify-content-between">
                                 <Col>
                                     <div onClick={() => navigate(PATH.profile + '/' + comment.user.username)}>
                                         @{comment.user.username}
                                     </div>
                                 </Col>
-                                <Col>
-                                    {comment.userId === userSession && (
-                                        <Dropdown style={{ position: 'absolute', zIndex: 500, right: 15 }}>
+                                <Col md="auto">
+                                    {comment.userId == userSession && (
+                                        <Dropdown>
                                             <Dropdown.Toggle
                                                 size="sm"
                                                 variant="outline-dark">
@@ -212,23 +212,21 @@ function CommentsModal({ postId, show, onHide, onUpdatePost }: CommentsModalProp
 
 
 type UserPostsProps = {
-    posts: GridPostProps[],
-    handleDeletePost: (postId: number) => void;
-    handleSaveChanges: (post: GridPostProps) => void;
-    content: string;
-    setContent: (content: string) => void;
-    isEditing: boolean | number;
-    setIsEditing: (isEditing: boolean | number) => void;
+    posts: GridPostProps[]
 };
 
 
-export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, content, setContent, isEditing, setIsEditing }: UserPostsProps) {
+export default function UserPosts({ posts }: UserPostsProps) {
     const navigate = useNavigate();
     const userSession = useSelector((state: RootState) => state.auth.userId);
-    const { likePost, unlikePost } = usePost();
+    const { likePost, unlikePost, deletePost, patchPost } = usePost();
     const dispatch = useDispatch();
+    const { showSuccess } = useToast();
     const [showComments, setShowComments] = useState(false);
     const [selectedPost, setSelectedPost] = useState<GridPostProps | null>(null);
+    const [content, setContent] = useState<string>('');
+    const [isEditing, setIsEditing] = useState<boolean | number>(false);
+
 
     const handleProfileClick = (username: string) => {
         navigate(PATH.profile + '/' + username);
@@ -283,14 +281,40 @@ export default function UserPosts({ posts, handleDeletePost, handleSaveChanges, 
         setSelectedPost(null);
     };
 
+    const handleDeletePost = async (postId: number) => {
+        dispatch(removePost(postId));
+        await deletePost(postId);
+        showSuccess("Publicação excluída com sucesso");
+    }
+
+    const handleSaveChanges = async (post: GridPostProps) => {
+        if (post.content === content) {
+            toggleEdit();
+            return
+        }
+
+        if (content === '') {
+            handleDeletePost(post.id);
+            return;
+        }
+
+        await patchPost({ content, id: post.id });
+        dispatch(updatePost({ content, id: post.id }));
+        showSuccess("Publicação editada com sucesso");
+
+        toggleEdit();
+    }
+
     return (
         <div>
             {!!posts.length && posts.map((post) => (
-                <div key={post.id}>
+                <div key={post.id} className="mt-4">
                     <Row>
                         <Col md={9}>
-                            <div onClick={() => handleProfileClick(post.user.username)}>
-                                foto de perfil
+                            <div
+                                className="d-flex align-items-center"
+                                onClick={() => handleProfileClick(post.user.username)}>
+                                <User />
                                 @{post.user.username}
                             </div>
                         </Col>

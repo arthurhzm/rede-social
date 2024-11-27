@@ -1,21 +1,28 @@
+import { User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import ExpandingTextarea from "../components/ExpandingTextarea";
 import LeftColumn from "../components/LeftColumn";
 import RightColumn from "../components/RightColumn";
 import UserPosts from "../components/UserPosts";
 import { useToast } from "../contexts/ToastContext";
 import usePost from "../hooks/use-post";
+import { PATH } from "../routes/routes";
 import { setUserId } from "../store/slices/authSlice";
-import { addPost, removePost, setPosts, updatePost } from "../store/slices/postsSlice";
+import { addPost, setPosts } from "../store/slices/postsSlice";
 import { RootState } from "../store/store";
-import { GridPostProps } from "../types/types";
 
 function PostContainer() {
     const { createPost } = usePost();
     const { showSuccess } = useToast();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const posts = useSelector((state: RootState) => state.posts.posts);
+    const userId = useSelector((state: RootState) => state.auth.userId);
+    const username = posts.find(p => p.userId == userId)?.user.username;
+
 
     const [content, setContent] = useState<string>('');
 
@@ -30,8 +37,10 @@ function PostContainer() {
     return (
         <>
             <Row>
-                <Col md={"auto"}>
-                    <small>Foto de perfil</small>
+                <Col
+                    md={"auto"}
+                    onClick={() => navigate(PATH.profile + '/' + username)}>
+                    <User />
                 </Col>
                 <ExpandingTextarea
                     content={content}
@@ -52,13 +61,10 @@ function PostContainer() {
 
 function Posts() {
 
-    const { fetchAllPosts, patchPost, deletePost } = usePost();
-    const { showSuccess } = useToast();
+    const { fetchAllPosts } = usePost();
     const dispatch = useDispatch();
 
     const [userSession, setUserSession] = useState<number>(0);
-    const [isEditing, setIsEditing] = useState<boolean | number>(false);
-    const [content, setContent] = useState<string>('');
     const posts = useSelector((state: RootState) => state.posts.posts);
 
     useEffect(() => {
@@ -74,45 +80,7 @@ function Posts() {
     }, []);
 
 
-    const toggleEdit = () => {
-        setIsEditing(false);
-        setContent("");
-    }
-
-    const handleDeletePost = async (postId: number) => {
-        dispatch(removePost(postId));
-        await deletePost(postId);
-        showSuccess("Publicação excluída com sucesso");
-    }
-
-    const handleSaveChanges = async (post: GridPostProps) => {
-        if (post.content === content) {
-            toggleEdit();
-            return
-        }
-
-        if (content === '') {
-            handleDeletePost(post.id);
-            return;
-        }
-
-        await patchPost({ content, id: post.id });
-        dispatch(updatePost({ content, id: post.id }));
-        showSuccess("Publicação editada com sucesso");
-
-        toggleEdit();
-    }
-
-    return (
-        <UserPosts
-            handleDeletePost={handleDeletePost}
-            handleSaveChanges={handleSaveChanges}
-            posts={posts}
-            content={content}
-            setContent={setContent}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing} />
-    )
+    return (<UserPosts posts={posts} />)
 }
 
 function MainColumn() {

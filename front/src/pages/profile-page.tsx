@@ -1,73 +1,21 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import LeftColumn from "../components/LeftColumn";
 import RightColumn from "../components/RightColumn";
 import UserPosts from "../components/UserPosts";
 import { useToast } from "../contexts/ToastContext";
-import usePost from "../hooks/use-post";
 import useProfile from "../hooks/use-profile";
 import useUser from "../hooks/use-user";
-import { removePost, updatePost } from "../store/slices/postsSlice";
 import { RootState } from "../store/store";
-import { GridPostProps, ProfilePostsProps } from "../types/types";
+import { ProfilePostsProps } from "../types/types";
 
-type PostsProps = {
-    profile: ProfilePostsProps
-}
+function ProfilePosts() {
+    const userId = useSelector((state: RootState) => state.auth.userId);
+    const posts = useSelector((state: RootState) => state.posts.posts).filter(post => post.userId == userId);
 
-function ProfilePosts({ profile }: PostsProps) {
-    const { showSuccess } = useToast();
-    const dispatch = useDispatch();
-    const { deletePost, patchPost } = usePost();
-
-    const [isEditing, setIsEditing] = useState<boolean | number>(false);
-    const [content, setContent] = useState<string>("");
-    const [posts, setPosts] = useState<GridPostProps[]>(profile.posts);
-
-    const toggleEdit = () => {
-        setIsEditing(false);
-        setContent("");
-    }
-
-    const handleDeletePost = async (postId: number) => {
-        dispatch(removePost(postId));
-        await deletePost(postId);
-        showSuccess("Publicação excluída com sucesso");
-        setPosts(profile.posts.filter(post => post.id !== postId));
-    }
-
-    const handleSaveChanges = async (post: GridPostProps) => {
-        if (post.content === content) {
-            toggleEdit();
-            return;
-        }
-
-        if (content === '') {
-            handleDeletePost(post.id);
-            return;
-        }
-
-        await patchPost({ content, id: post.id });
-        dispatch(updatePost({ content, id: post.id }));
-        showSuccess("Publicação editada com sucesso");
-
-        setPosts(posts.map(p => p.id === post.id ? { ...p, content } : p));
-        toggleEdit();
-    }
-
-
-    return (
-        <UserPosts
-            handleDeletePost={handleDeletePost}
-            handleSaveChanges={handleSaveChanges}
-            content={content}
-            setContent={setContent}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing}
-            posts={posts} />
-    )
+    return (<UserPosts posts={posts} />)
 }
 
 function MainColumn() {
@@ -147,7 +95,7 @@ function MainColumn() {
                     {profile && userId != profile.id && <Button onClick={toggleFollow}>{isFollowing ? 'Seguindo' : 'Seguir'}</Button>}
                 </Col>
             </Row>
-            {profile && (<ProfilePosts profile={profile} />)}
+            {profile && (<ProfilePosts />)}
         </Col>
     )
 }
