@@ -10,6 +10,7 @@ import useProfile from "../hooks/use-profile";
 import useUser from "../hooks/use-user";
 import { RootState } from "../store/store";
 import { ProfilePostsProps } from "../types/types";
+import { User } from "lucide-react";
 
 function ProfilePosts() {
     const userId = useSelector((state: RootState) => state.auth.userId);
@@ -81,18 +82,29 @@ function MainColumn() {
 
     return (
         <Col md={6}>
-            <Row>
-                <Col>
-                    foto de capa
+            <Row className="mb-1">
+                <Col style={{ backgroundColor: '#383e47', height: '10rem' }}>
                 </Col>
             </Row>
             <Row>
-                <Col md={"auto"}>Foto de perfil</Col>
-                <Col className="d-flex gap-2">
+                <Col className="d-flex gap-2 align-items-center">
+                    <User />
                     <span>@{username}</span>
                     <span onClick={profileFollowers}>{profile?.followers} seguidores</span>
-                    {profile && userId == profile.id && <button>Editar perfil</button>}
-                    {profile && userId != profile.id && <Button onClick={toggleFollow}>{isFollowing ? 'Seguindo' : 'Seguir'}</Button>}
+                    {profile && userId == profile.id && (
+                        <Col className="text-end">
+                            <Button variant="outline-dark">
+                                Editar perfil
+                            </Button>
+                        </Col>
+                    )
+                    }
+
+                    {profile && userId != profile.id &&
+                        <Button onClick={toggleFollow}>
+                            {isFollowing ? 'Seguindo' : 'Seguir'}
+                        </Button>
+                    }
                 </Col>
             </Row>
             {profile && (<ProfilePosts />)}
@@ -104,7 +116,7 @@ export default function ProfilePage() {
 
     return (
         <Container fluid>
-            <Row>
+            <Row className="mt-1">
                 <LeftColumn />
                 <MainColumn />
                 <RightColumn />
