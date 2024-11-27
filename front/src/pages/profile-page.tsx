@@ -93,7 +93,7 @@ function MainColumn() {
                     <span onClick={profileFollowers}>{profile?.followers} seguidores</span>
                     {profile && userId == profile.id && (
                         <Col className="text-end">
-                            <Button variant="outline-dark">
+                            <Button variant="outline-darkep">
                                 Editar perfil
                             </Button>
                         </Col>
