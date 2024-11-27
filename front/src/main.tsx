@@ -14,6 +14,7 @@ import { Provider } from 'react-redux';
 import store, { persistor } from './store/store.ts';
 import ProfilePage from './pages/profile-page.tsx';
 import { PersistGate } from 'redux-persist/integration/react';
+import SearchPage from './pages/search-page.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -32,6 +33,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route element={<PrivateRoute />} >
                   <Route path="/" element={<MainPage />} />
                   <Route path='/profile/:username' element={<ProfilePage />} />
+                  <Route path='/search' element={<SearchPage />} />
                 </Route>
               </Routes>
 
