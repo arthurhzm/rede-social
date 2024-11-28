@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import LeftColumn from "../components/LeftColumn";
+import ProfileInformation from "../components/ProfileInformation";
 import SearchContainer from "../components/SearchContainer";
-import usePost from "../hooks/use-post";
-import { GridPostProps, ProfilePostsProps } from "../types/types";
 import UserPosts from "../components/UserPosts";
 import useUser from "../hooks/use-user";
-import ProfileInformation from "../components/ProfileInformation";
+import { RootState } from "../store/store";
+import { ProfilePostsProps } from "../types/types";
 
 type SearchFilterProps = {
     name: string;
@@ -27,20 +28,16 @@ function SearchFilter({ name, onClick }: SearchFilterProps) {
 
 function SearchResults() {
     const location = useLocation();
-    const { getByContent } = usePost();
     const { searchAllByUsername } = useUser();
 
-    const [posts, setPosts] = useState<GridPostProps[] | []>([]);
+    const posts = useSelector((state: RootState) => state.posts.posts)
+        .filter(post => post.content && post.content.includes(location.state));
+
     const [users, setUsers] = useState<ProfilePostsProps[]>([]);
     const [showPosts, setShowPosts] = useState<boolean>(true);
 
     useEffect(() => {
         if (!location) return;
-
-        getByContent(location.state)
-            .then(res => {
-                setPosts(res.data.posts);
-            });
 
         searchAllByUsername(location.state)
             .then(res => {

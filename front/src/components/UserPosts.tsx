@@ -249,6 +249,7 @@ export default function UserPosts({ posts }: UserPostsProps) {
     };
 
     const toggleLikePost = async (post: GridPostProps) => {
+        
         const updatedPosts = posts.map(p => {
             if (p.id === post.id) {
                 if (p.likes.some(l => l.userId === userSession)) {
@@ -267,7 +268,6 @@ export default function UserPosts({ posts }: UserPostsProps) {
             }
             return p;
         });
-
         dispatch(setPosts(updatedPosts));
     };
 
