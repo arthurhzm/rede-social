@@ -6,6 +6,8 @@ import { useToast } from "../contexts/ToastContext";
 import useProfile from "../hooks/use-profile";
 import { RootState } from "../store/store";
 import { ProfilePostsProps } from "../types/types";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "../routes/routes";
 
 type ProfileInformationProps = {
     userProfile: ProfilePostsProps
@@ -15,6 +17,7 @@ export default function ProfileInformation({ userProfile }: ProfileInformationPr
     const userId = useSelector((state: RootState) => state.auth.userId);
     const { getFollowers, followUser, unfollowUser } = useProfile();
     const { showSuccess } = useToast();
+    const navigate = useNavigate();
 
     const [followers, setFollowers] = useState<ProfilePostsProps[]>([]);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -59,8 +62,10 @@ export default function ProfileInformation({ userProfile }: ProfileInformationPr
     return (
         <Row>
             <Col className="d-flex gap-2 align-items-center">
-                <User />
-                <span>@{profile?.username}</span>
+                <div onClick={() => navigate(PATH.profile + '/' + profile.username)}>
+                    <User />
+                    <span>@{profile?.username}</span>
+                </div>
                 <span onClick={profileFollowers}>{profile?.followers} seguidores</span>
                 {profile && userId == profile.id && (
                     <Col className="text-end">
