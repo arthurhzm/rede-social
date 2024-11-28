@@ -64,7 +64,7 @@ function SearchResults() {
                 <SearchFilter name="Usuários" onClick={toggleView} />
             </Row>
             <Row className="mt-4">
-                {showPosts ? (<UserPosts posts={posts} />) : (<div className="d-flex flex-column gap-3">{users.map(u => (<ProfileInformation userProfile={u} />))}</div>)}
+                {showPosts ? (<UserPosts posts={posts} />) : (<div className="d-flex flex-column gap-3">{users.map(u => (<ProfileInformation userProfile={u} key={u.id} />))}</div>)}
             </Row>
         </>
     )

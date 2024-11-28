@@ -67,14 +67,6 @@ export default function ProfileInformation({ userProfile }: ProfileInformationPr
                     <span>@{profile?.username}</span>
                 </div>
                 <span onClick={profileFollowers}>{profile?.followers} seguidores</span>
-                {profile && userId == profile.id && (
-                    <Col className="text-end">
-                        <Button variant="outline-darkep">
-                            Editar perfil
-                        </Button>
-                    </Col>
-                )
-                }
 
                 {profile && userId != profile.id &&
                     <Button onClick={toggleFollow}>

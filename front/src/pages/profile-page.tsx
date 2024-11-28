@@ -10,10 +10,12 @@ import useUser from "../hooks/use-user";
 import { RootState } from "../store/store";
 import { ProfilePostsProps } from "../types/types";
 
-function ProfilePosts() {
-    const userId = useSelector((state: RootState) => state.auth.userId);
-    const posts = useSelector((state: RootState) => state.posts.posts).filter(post => post.userId == userId);
+type ProfileDetailsProps = {
+    profile: ProfilePostsProps
+}
 
+function ProfilePosts({ profile }: ProfileDetailsProps) {
+    const posts = useSelector((state: RootState) => state.posts.posts).filter(post => post.userId == profile.id);
     return (<UserPosts posts={posts} />)
 }
 
@@ -36,6 +38,7 @@ function MainColumn() {
         fetchProfile();
     }, [username]);
 
+
     if (loading) return <h1>Carregando...</h1>;
 
     return (
@@ -45,7 +48,7 @@ function MainColumn() {
                 </Col>
             </Row>
             {profile && (<ProfileInformation userProfile={profile} />)}
-            {profile && (<ProfilePosts />)}
+            {profile && (<ProfilePosts profile={profile} />)}
         </Col>
     )
 }
