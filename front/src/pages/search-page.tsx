@@ -4,9 +4,10 @@ import { useLocation } from "react-router-dom";
 import LeftColumn from "../components/LeftColumn";
 import SearchContainer from "../components/SearchContainer";
 import usePost from "../hooks/use-post";
-import { GridPostProps } from "../types/types";
+import { GridPostProps, ProfilePostsProps } from "../types/types";
 import UserPosts from "../components/UserPosts";
 import useUser from "../hooks/use-user";
+import ProfileInformation from "../components/ProfileInformation";
 
 type SearchFilterProps = {
     name: string;
@@ -30,7 +31,8 @@ function SearchResults() {
     const { searchAllByUsername } = useUser();
 
     const [posts, setPosts] = useState<GridPostProps[] | []>([]);
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState<ProfilePostsProps[]>([]);
+    const [showPosts, setShowPosts] = useState<boolean>(true);
 
     useEffect(() => {
         if (!location) return;
@@ -42,28 +44,27 @@ function SearchResults() {
 
         searchAllByUsername(location.state)
             .then(res => {
-                console.log(res.data);
                 setUsers(res.data)
             })
 
-    }, [location])
+    }, [location]);
 
-    const handlePostsClick = () => {
+    useEffect(() => {
 
-    }
+    }, [showPosts]);
 
-    const handleUsersClick = () => {
-
+    const toggleView = () => {
+        setShowPosts(!showPosts);
     }
 
     return (
         <>
             <Row className="mt-1">
-                <SearchFilter name="Publicações" onClick={handlePostsClick} />
-                <SearchFilter name="Usuários" onClick={handleUsersClick} />
+                <SearchFilter name="Publicações" onClick={toggleView} />
+                <SearchFilter name="Usuários" onClick={toggleView} />
             </Row>
             <Row>
-                <UserPosts posts={posts} />
+                {showPosts ? (<UserPosts posts={posts} />) : (users.map(u => (<ProfileInformation userProfile={u} />)))}
             </Row>
         </>
     )
