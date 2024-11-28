@@ -29,12 +29,18 @@ const useUser = () => {
         return res;
     }
 
+    const searchAllByUsername = async (username: string) => {
+        const res = await api.get(`/users/search?username=${username}`);
+        return res;
+    }
+
     return {
         createUser,
         authenticateUser,
         logoutUser,
         refreshToken,
-        getByUsername
+        getByUsername,
+        searchAllByUsername
     }
 }
 

@@ -55,6 +55,22 @@ namespace api.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("search")]
+        public async Task<ActionResult<PostModel[]>> GetByContent([FromQuery] string content)
+        {
+            try
+            {
+                var posts = await _postService.GetByContent(content);
+                return Ok(new { data = new { posts } });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+                throw;
+            }
+        }
+
         [HttpPatch]
         public async Task<ActionResult<PostModel>> Update([FromBody] UpdatePostDTO model)
         {

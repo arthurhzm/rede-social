@@ -14,6 +14,12 @@ const usePost = () => {
         return res;
     }
 
+    const getByContent = async (content: string) => {
+        const res = await api.get(`/posts/search?content=${content}`);
+        return res;
+    }
+
+
     const patchPost = async (payload: UpdatePostProps) => {
         const res = await api.patch("/posts", payload);
         return res;
@@ -42,6 +48,7 @@ const usePost = () => {
     return {
         createPost,
         fetchAllPosts,
+        getByContent,
         patchPost,
         deletePost,
         likePost,

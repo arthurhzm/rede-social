@@ -88,7 +88,7 @@ namespace api.Controllers
         [ServiceFilter(typeof(AuthFilter))]
         public async Task<ActionResult<UserModel>> GetByUsername(string username)
         {
-            var user = await _userService.GetByUsername(username);
+            var user = await _userService.GetByUsername(username, "UNIQUE");
             return Ok(new { data = user });
         }
 
@@ -145,5 +145,13 @@ namespace api.Controllers
                 return BadRequest(new { message = e.Message });
             }
         }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<UserModel>> Search([FromQuery] string username)
+        {
+            var user = await _userService.GetByUsername(username, "ALL");
+            return Ok(new { data = user });
+        }
+
     }
 }

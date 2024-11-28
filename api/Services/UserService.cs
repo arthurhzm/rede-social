@@ -101,50 +101,74 @@ namespace api.Services
             return newToken;
         }
 
-        public async Task<ProfileDTO> GetByUsername(string username)
+        public async Task<List<ProfileDTO>> GetByUsername(string username, string origin)
         {
-            var user = await _context.Users
-            .Include(u => u.Posts)
-            .ThenInclude(p => p.Likes)
-            .Include(u => u.Posts)
-            .ThenInclude(p => p.Comments)
-            .FirstOrDefaultAsync(u => u.Username == username)
-            ?? throw new Exception("Usuário não encontrado");
-
-            var followersCount = await _context.Follows.CountAsync(f => f.FollowedId == user.Id);
-
-            return new ProfileDTO
+            List<UserModel> users;
+            if (origin == "UNIQUE")
             {
-                Id = user.Id,
-                Username = user.Username,
-                Posts = user.Posts.Select(p => new PostModel
+                users = new List<UserModel>
+            {
+                await _context.Users
+                .Include(u => u.Posts)
+                .ThenInclude(p => p.Likes)
+                .Include(u => u.Posts)
+                .ThenInclude(p => p.Comments)
+                .FirstOrDefaultAsync(u => EF.Functions.Like(u.Username, $"%{username}%"))
+                ?? throw new Exception("Usuário não encontrado")
+            };
+            }
+            else
+            {
+                users = await _context.Users
+                    .Include(u => u.Posts)
+                    .ThenInclude(p => p.Likes)
+                    .Include(u => u.Posts)
+                    .ThenInclude(p => p.Comments)
+                    .Where(u => EF.Functions.Like(u.Username, $"%{username}%"))
+                    .ToListAsync();
+            }
+
+            var profiles = new List<ProfileDTO>();
+
+            foreach (var user in users)
+            {
+                var followersCount = await _context.Follows.CountAsync(f => f.FollowedId == user.Id);
+
+                profiles.Add(new ProfileDTO
                 {
-                    Id = p.Id,
-                    Content = p.Content,
-                    CreatedAt = p.CreatedAt,
-                    UserId = p.UserId,
-                    User = new UserModel
+                    Id = user.Id,
+                    Username = user.Username,
+                    Posts = user.Posts.Select(p => new PostModel
                     {
-                        Username = p.User.Username
-                    },
-                    Likes = p.Likes.Select(l => new LikeModel
-                    {
-                        UserId = l.UserId
-                    }).ToList(),
-                    Comments = p.Comments.Select(c => new CommentsModel
-                    {
-                        Id = c.Id,
-                        Content = c.Content,
-                        UserId = c.UserId,
-                        createdAt = c.createdAt,
+                        Id = p.Id,
+                        Content = p.Content,
+                        CreatedAt = p.CreatedAt,
+                        UserId = p.UserId,
                         User = new UserModel
                         {
-                            Username = (from u in _context.Users where u.Id == c.UserId select u.Username).FirstOrDefault()
-                        }
-                    }).ToList()
-                }).ToList(),
-                Followers = followersCount
-            };
+                            Username = p.User.Username
+                        },
+                        Likes = p.Likes.Select(l => new LikeModel
+                        {
+                            UserId = l.UserId
+                        }).ToList(),
+                        Comments = p.Comments.Select(c => new CommentsModel
+                        {
+                            Id = c.Id,
+                            Content = c.Content,
+                            UserId = c.UserId,
+                            createdAt = c.createdAt,
+                            User = new UserModel
+                            {
+                                Username = (from u in _context.Users where u.Id == c.UserId select u.Username).FirstOrDefault()
+                            }
+                        }).ToList()
+                    }).ToList(),
+                    Followers = followersCount
+                });
+            }
+
+            return profiles;
         }
 
         public async Task FollowUser(int followerId, int followedId)

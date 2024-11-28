@@ -36,7 +36,7 @@ function MainColumn() {
 
         const fetchProfile = async () => {
             const res = await getByUsername(username);
-            setProfile(res.data);
+            setProfile(res.data[0]);
         }
 
         fetchProfile();

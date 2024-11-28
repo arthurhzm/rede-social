@@ -73,6 +73,41 @@ namespace api.Services
             .ToArrayAsync();
         }
 
+        public async Task<PostModel[]> GetByContent(string content)
+        {
+            return await _context.Posts
+                .Where(p => EF.Functions.Like(p.Content.ToLower(), $"%{content.ToLower()}%"))
+                .Include(p => p.User)
+                .Include(p => p.Likes)
+                .Include(p => p.Comments)
+                .Select(p => new PostModel
+                {
+                    Id = p.Id,
+                    Content = p.Content,
+                    UserId = p.UserId,
+                    User = new UserModel
+                    {
+                        Username = p.User.Username
+                    },
+                    Likes = p.Likes.Select(l => new LikeModel
+                    {
+                        UserId = l.UserId
+                    }).ToList(),
+                    Comments = p.Comments.Select(c => new CommentsModel
+                    {
+                        Id = c.Id,
+                        Content = c.Content,
+                        UserId = c.UserId,
+                        createdAt = c.createdAt,
+                        User = new UserModel
+                        {
+                            Username = (from u in _context.Users where u.Id == c.UserId select u.Username).FirstOrDefault()
+                        }
+                    }).ToList()
+                })
+                .ToArrayAsync();
+        }
+
         public async Task<PostModel> Update(UpdatePostDTO model)
         {
             var post = await _context.Posts.FindAsync(model.Id);

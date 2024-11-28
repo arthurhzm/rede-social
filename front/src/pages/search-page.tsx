@@ -1,8 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import LeftColumn from "../components/LeftColumn";
 import SearchContainer from "../components/SearchContainer";
+import usePost from "../hooks/use-post";
+import { GridPostProps } from "../types/types";
+import UserPosts from "../components/UserPosts";
+import useUser from "../hooks/use-user";
 
 type SearchFilterProps = {
     name: string;
@@ -22,11 +26,25 @@ function SearchFilter({ name, onClick }: SearchFilterProps) {
 
 function SearchResults() {
     const location = useLocation();
+    const { getByContent } = usePost();
+    const { searchAllByUsername } = useUser();
+
+    const [posts, setPosts] = useState<GridPostProps[] | []>([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         if (!location) return;
 
-        // adicionar a lógica para pesquisar posts e usuários
+        getByContent(location.state)
+            .then(res => {
+                setPosts(res.data.posts);
+            });
+
+        searchAllByUsername(location.state)
+            .then(res => {
+                console.log(res.data);
+                setUsers(res.data)
+            })
 
     }, [location])
 
@@ -39,10 +57,15 @@ function SearchResults() {
     }
 
     return (
-        <Row className="mt-1">
-            <SearchFilter name="Publicações" onClick={handlePostsClick} />
-            <SearchFilter name="Usuários" onClick={handleUsersClick} />
-        </Row>
+        <>
+            <Row className="mt-1">
+                <SearchFilter name="Publicações" onClick={handlePostsClick} />
+                <SearchFilter name="Usuários" onClick={handleUsersClick} />
+            </Row>
+            <Row>
+                <UserPosts posts={posts} />
+            </Row>
+        </>
     )
 }
 
