@@ -18,7 +18,7 @@ const usePost = () => {
         const res = await api.get(`/posts/search?content=${content}`);
         return res;
     }
-
+a
 
     const patchPost = async (payload: UpdatePostProps) => {
         const res = await api.patch("/posts", payload);
